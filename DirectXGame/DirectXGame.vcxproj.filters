@@ -16,10 +16,49 @@
     <Filter Include="シェーダー ファイル">
       <UniqueIdentifier>{718c7f4c-fc51-40ad-a221-b9456a7a1a3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="scene">
+      <UniqueIdentifier>{5b00d7b9-4438-4933-9747-4b44c68020bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="自作ファイル">
+      <UniqueIdentifier>{ffb4a13c-1cf7-4f92-a9df-b072d8c7cd6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene\title">
+      <UniqueIdentifier>{8ae37dc4-5bd9-40d0-a556-6af778987386}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene\game">
+      <UniqueIdentifier>{68e3cbc7-3460-4ad4-b830-cd9e9b6ed60a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene\select">
+      <UniqueIdentifier>{40917d5b-75d0-4e74-8d4f-681407fdf357}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene\clear">
+      <UniqueIdentifier>{82dc0e1e-a7e3-4746-8b22-e4bfb80e5995}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene\main">
+      <UniqueIdentifier>{cdf24659-81d1-49d3-991e-952598e78649}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="WorldTransformEx.cpp">
       <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>自作ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Title.cpp">
+      <Filter>scene\title</Filter>
+    </ClCompile>
+    <ClCompile Include="GameScene.cpp">
+      <Filter>scene\game</Filter>
+    </ClCompile>
+    <ClCompile Include="StageSelect.cpp">
+      <Filter>scene\select</Filter>
+    </ClCompile>
+    <ClCompile Include="GameClear.cpp">
+      <Filter>scene\clear</Filter>
+    </ClCompile>
+    <ClCompile Include="MainScene.cpp">
+      <Filter>scene\main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -70,5 +109,22 @@
     <None Include="Resources\shaders\Terrain.hlsli">
       <Filter>シェーダー ファイル</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Title.h">
+      <Filter>scene\title</Filter>
+    </ClInclude>
+    <ClInclude Include="GameScene.h">
+      <Filter>scene\game</Filter>
+    </ClInclude>
+    <ClInclude Include="StageSelect.h">
+      <Filter>scene\select</Filter>
+    </ClInclude>
+    <ClInclude Include="GameClear.h">
+      <Filter>scene\clear</Filter>
+    </ClInclude>
+    <ClInclude Include="MainScene.h">
+      <Filter>scene\main</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
