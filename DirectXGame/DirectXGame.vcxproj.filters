@@ -37,6 +37,9 @@
     <Filter Include="scene\main">
       <UniqueIdentifier>{cdf24659-81d1-49d3-991e-952598e78649}</UniqueIdentifier>
     </Filter>
+    <Filter Include="player">
+      <UniqueIdentifier>{7a209447-b27a-4910-9a5b-bf3a9ccb3b35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WorldTransformEx.cpp">
@@ -59,6 +62,15 @@
     </ClCompile>
     <ClCompile Include="MainScene.cpp">
       <Filter>scene\main</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerBullet.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>player</Filter>
+    </ClCompile>
+    <ClCompile Include="kMath.cpp">
+      <Filter>自作ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -125,6 +137,15 @@
     </ClInclude>
     <ClInclude Include="MainScene.h">
       <Filter>scene\main</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerBullet.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>player</Filter>
+    </ClInclude>
+    <ClInclude Include="kMath.h">
+      <Filter>自作ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

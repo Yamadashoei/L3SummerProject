@@ -108,8 +108,11 @@
   <ItemGroup>
     <ClCompile Include="GameClear.cpp" />
     <ClCompile Include="GameScene.cpp" />
+    <ClCompile Include="kMath.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainScene.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerBullet.cpp" />
     <ClCompile Include="StageSelect.cpp" />
     <ClCompile Include="Title.cpp" />
     <ClCompile Include="WorldTransformEx.cpp" />
@@ -192,7 +195,10 @@
   <ItemGroup>
     <ClInclude Include="GameClear.h" />
     <ClInclude Include="GameScene.h" />
+    <ClInclude Include="kMath.h" />
     <ClInclude Include="MainScene.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerBullet.h" />
     <ClInclude Include="StageSelect.h" />
     <ClInclude Include="Title.h" />
   </ItemGroup>

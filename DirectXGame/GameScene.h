@@ -1,6 +1,9 @@
 #pragma once
 #include "KamataEngine.h"
 
+#include "Player.h"
+#include "PlayerBullet.h"
+
 using namespace KamataEngine;
 
 class GameScene {
@@ -17,10 +20,21 @@ public:
 	void Draw();
 
 private:
+	// カメラ
+	KamataEngine::Camera camera;
+
+	// DirectX / 入力 / オーディオ
 	KamataEngine::DirectXCommon* dxCommon_ = nullptr;
 	KamataEngine::Input* input_ = nullptr;
 	KamataEngine::Audio* audio_ = nullptr;
 
-	// カメラ
-	Camera camera_;
+	// モデル
+	KamataEngine::Model* modelPlayer_ = nullptr;
+
+	// デバッグカメラ
+	KamataEngine::DebugCamera* debugCamera_ = nullptr;
+	bool isDebugCameraActive_ = false;
+
+	// プレイヤー
+	Player* player_ = nullptr;
 };
