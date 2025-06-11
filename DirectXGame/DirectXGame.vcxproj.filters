@@ -28,9 +28,6 @@
     <Filter Include="scene\game">
       <UniqueIdentifier>{68e3cbc7-3460-4ad4-b830-cd9e9b6ed60a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="scene\select">
-      <UniqueIdentifier>{40917d5b-75d0-4e74-8d4f-681407fdf357}</UniqueIdentifier>
-    </Filter>
     <Filter Include="scene\clear">
       <UniqueIdentifier>{82dc0e1e-a7e3-4746-8b22-e4bfb80e5995}</UniqueIdentifier>
     </Filter>
@@ -42,6 +39,18 @@
     </Filter>
     <Filter Include="enemy">
       <UniqueIdentifier>{17d10519-33a7-41d2-9f23-c0dff6073208}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="enemy\small">
+      <UniqueIdentifier>{5bbaf062-5b68-4e86-b9d3-2fc554ca61a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="enemy\mid">
+      <UniqueIdentifier>{e06f9e13-59f6-4434-999b-2cdb18e72750}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="enemy\big">
+      <UniqueIdentifier>{a6b94dec-bfa8-4d70-96a4-ee859bac939e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene\stage">
+      <UniqueIdentifier>{323a8e63-dd99-4d3e-9bc0-44910121dc17}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -56,9 +65,6 @@
     </ClCompile>
     <ClCompile Include="GameScene.cpp">
       <Filter>scene\game</Filter>
-    </ClCompile>
-    <ClCompile Include="StageSelect.cpp">
-      <Filter>scene\select</Filter>
     </ClCompile>
     <ClCompile Include="GameClear.cpp">
       <Filter>scene\clear</Filter>
@@ -78,11 +84,35 @@
     <ClCompile Include="EnemyBullet.cpp">
       <Filter>enemy</Filter>
     </ClCompile>
-    <ClCompile Include="Enemy.cpp">
+    <ClCompile Include="BigEnemy.cpp">
+      <Filter>enemy\big</Filter>
+    </ClCompile>
+    <ClCompile Include="MidEnemy.cpp">
+      <Filter>enemy\mid</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseEnemy.cpp">
       <Filter>enemy</Filter>
     </ClCompile>
+    <ClCompile Include="smallEnemy.cpp">
+      <Filter>enemy\small</Filter>
+    </ClCompile>
     <ClCompile Include="Collision.cpp">
-      <Filter>ソース ファイル</Filter>
+      <Filter>自作ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage3.cpp">
+      <Filter>scene\stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage2.cpp">
+      <Filter>scene\stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Stage1.cpp">
+      <Filter>scene\stage</Filter>
+    </ClCompile>
+    <ClCompile Include="FinalStage.cpp">
+      <Filter>scene\stage</Filter>
+    </ClCompile>
+    <ClCompile Include="StageBase.cpp">
+      <Filter>scene\game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -141,9 +171,6 @@
     <ClInclude Include="GameScene.h">
       <Filter>scene\game</Filter>
     </ClInclude>
-    <ClInclude Include="StageSelect.h">
-      <Filter>scene\select</Filter>
-    </ClInclude>
     <ClInclude Include="GameClear.h">
       <Filter>scene\clear</Filter>
     </ClInclude>
@@ -159,14 +186,38 @@
     <ClInclude Include="kMath.h">
       <Filter>自作ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Enemy.h">
-      <Filter>enemy</Filter>
-    </ClInclude>
     <ClInclude Include="EnemyBullet.h">
       <Filter>enemy</Filter>
     </ClInclude>
+    <ClInclude Include="BigEnemy.h">
+      <Filter>enemy\big</Filter>
+    </ClInclude>
+    <ClInclude Include="MidEnemy.h">
+      <Filter>enemy\mid</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseEnemy.h">
+      <Filter>enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="smallEnemy.h">
+      <Filter>enemy\small</Filter>
+    </ClInclude>
     <ClInclude Include="Collision.h">
-      <Filter>ヘッダー ファイル</Filter>
+      <Filter>自作ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage3.h">
+      <Filter>scene\stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage2.h">
+      <Filter>scene\stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Stage1.h">
+      <Filter>scene\stage</Filter>
+    </ClInclude>
+    <ClInclude Include="FinalStage.h">
+      <Filter>scene\stage</Filter>
+    </ClInclude>
+    <ClInclude Include="StageBase.h">
+      <Filter>scene\game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

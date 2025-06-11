@@ -1,6 +1,8 @@
 #include "GameScene.h"
-#include "Enemy.h"
+#include "MidEnemy.h"
 #include "Player.h"
+#include "SmallEnemy.h"
+// #include "BigEnemy.h" // ← BigEnemy作成時に追加予定
 
 #include <cassert>
 
@@ -8,72 +10,62 @@ using namespace KamataEngine;
 
 GameScene::~GameScene() {
 	delete modelPlayer_;
-	delete player_;
 	delete modelEnemy_;
+	delete modelMidEnemy_;
+	delete modelBigEnemy_;
 
-	for (Enemy* enemy : enemies_) {
+	delete player_;
+	delete debugCamera_;
+
+	for (BaseEnemy* enemy : enemies_) {
 		delete enemy;
 	}
-
-	delete debugCamera_;
 }
 
 void GameScene::Initialize() {
-	// システム系の初期化
 	dxCommon_ = DirectXCommon::GetInstance();
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 
-	// カメラ初期化
 	camera.Initialize();
-	camera.translation_ = {0.0f, 0.0f, -50.0f}; // TPS用に少し後方に置く
-	camera.rotation_ = {0.0f, 0.0f, 0.0f};      // 正面向き
+	camera.translation_ = {0.0f, 0.0f, -50.0f};
+	camera.rotation_ = {0.0f, 0.0f, 0.0f};
 	camera.UpdateMatrix();
 
-	// プレイヤーモデル読み込み
-	modelPlayer_ = KamataEngine::Model::CreateFromOBJ("cube");
+	modelPlayer_ = Model::CreateFromOBJ("cube");
+	modelEnemy_ = Model::CreateFromOBJ("cube");    // 仮モデル
+	modelMidEnemy_ = Model::CreateFromOBJ("cube"); // 仮モデル
+	modelBigEnemy_ = Model::CreateFromOBJ("cube"); // 仮モデル
 
-	// プレイヤー生成・初期化
 	player_ = new Player();
 	player_->Initialize(modelPlayer_);
 
-	// Enemy モデル読み込み
-	modelEnemy_ = KamataEngine::Model::CreateFromOBJ("cube");
+	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
 
-	// 弾撃ち敵の追加
-	Enemy* shootEnemy = new Enemy();
-	shootEnemy->Initialize(modelEnemy_, {0.0f, 5.0f, 10.0f}, Enemy::AttackType::Shoot, Enemy::EnemyType::Fish);
+	AxisIndicator::GetInstance()->SetVisible(true);
+	AxisIndicator::GetInstance()->SetTargetCamera(&camera);
+
+	// ★ SmallEnemy生成
+	SmallEnemy* shootEnemy = new SmallEnemy();
+	shootEnemy->Initialize(modelEnemy_, {0.0f, 5.0f, 10.0f}, SmallEnemy::AttackType::Shoot);
 	enemies_.push_back(shootEnemy);
 
-	// 体当たり敵の追加（動きはまだ未実装だけど先に配置だけOK）
-	Enemy* ramEnemy = new Enemy();
-	ramEnemy->Initialize(modelEnemy_, {-5.0f, 3.0f, 20.0f}, Enemy::AttackType::Ram, Enemy::EnemyType::Fish);
+	SmallEnemy* ramEnemy = new SmallEnemy();
+	ramEnemy->Initialize(modelEnemy_, {-5.0f, 3.0f, 20.0f}, SmallEnemy::AttackType::Ram);
 	enemies_.push_back(ramEnemy);
 
-	// デバッグカメラ生成
-	debugCamera_ = new KamataEngine::DebugCamera(KamataEngine::WinApp::kWindowWidth, KamataEngine::WinApp::kWindowHeight);
+	// ★ MidEnemy生成
+	MidEnemy* midEnemy = new MidEnemy();
+	midEnemy->Initialize(modelMidEnemy_, {5.0f, 0.0f, 15.0f});
+	enemies_.push_back(midEnemy);
 
-	// 軸表示
-	KamataEngine::AxisIndicator::GetInstance()->SetVisible(true);
-	KamataEngine::AxisIndicator::GetInstance()->SetTargetCamera(&camera);
+	// BigEnemyは後で同様に追加予定
 }
 
 void GameScene::Update() {
-
-	// ★ プレイヤー位置取得
-	Vector3 playerPos = player_->GetWorldPosition();
-
-	// ★ 各Enemyにプレイヤー位置をセット
-	for (Enemy* enemy : enemies_) {
-		//enemy->SetPlayerPosition(playerPos);
-		enemy->Update(playerPos);
-	}
-
-	// プレイヤー更新
 	player_->Update();
 
 #ifdef _DEBUG
-	// デバッグカメラ切り替え
 	if (input_->TriggerKey(DIK_0)) {
 		isDebugCameraActive_ = !isDebugCameraActive_;
 	}
@@ -88,40 +80,32 @@ void GameScene::Update() {
 		camera.UpdateMatrix();
 	}
 
-	// 敵更新
-	for (Enemy* enemy : enemies_) {
+	// ★ 各Enemy更新
+	for (BaseEnemy* enemy : enemies_) {
 		enemy->Update(player_->GetWorldPosition());
 	}
 
-	// ① Player と Enemy の当たり判定
-	for (Enemy* enemy : enemies_) {
+	// ★ 当たり判定：Player vs Enemy
+	for (BaseEnemy* enemy : enemies_) {
 		if (player_->GetCollision().CheckCollision(enemy->GetCollision())) {
-			player_->TakeDamage(20); // 敵体当たり → プレイヤーに20ダメージ
+			player_->TakeDamage(20);
+			player_->SetHit();
 			OutputDebugStringA("Player hit Enemy!\n");
 		}
 	}
 
-	// ② Player と EnemyBullet の当たり判定
-	for (Enemy* enemy : enemies_) {
-		for (EnemyBullet* bullet : enemy->GetBullets()) {
-			if (player_->GetCollision().CheckCollision(bullet->GetCollision())) {
-				player_->TakeDamage(10); // 弾ヒット → プレイヤーに10ダメージ
-				OutputDebugStringA("Player hit EnemyBullet!\n");
-			}
-		}
-	}
-
-	// ③ PlayerBullet と Enemy の当たり判定
-	for (Enemy* enemy : enemies_) {
+	// ★ PlayerBullet vs Enemy
+	for (BaseEnemy* enemy : enemies_) {
 		for (PlayerBullet* bullet : player_->GetBullets()) {
 			if (enemy->GetCollision().CheckCollision(bullet->GetCollision())) {
-				enemy->TakeDamage(10); // プレイヤー弾 → 敵に10ダメージ
+				enemy->TakeDamage(10);
 				OutputDebugStringA("PlayerBullet hit Enemy!\n");
 			}
 		}
 	}
 
-	enemies_.remove_if([](Enemy* enemy) {
+	// ★ Enemy削除
+	enemies_.remove_if([](BaseEnemy* enemy) {
 		if (enemy->IsDead()) {
 			delete enemy;
 			OutputDebugStringA("Enemy destroyed!\n");
@@ -129,7 +113,6 @@ void GameScene::Update() {
 		}
 		return false;
 	});
-
 }
 
 void GameScene::Draw() {
@@ -144,11 +127,10 @@ void GameScene::Draw() {
 #pragma region 3Dオブジェクト描画
 	Model::PreDraw(commandList);
 
-	// プレイヤー描画
 	player_->Draw(camera);
 
-	// 敵描画
-	for (Enemy* enemy : enemies_) {
+	// ★ 各Enemy描画
+	for (BaseEnemy* enemy : enemies_) {
 		enemy->Draw(camera);
 	}
 

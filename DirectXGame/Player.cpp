@@ -2,8 +2,8 @@
 #include "PlayerBullet.h"
 #include "kMath.h"
 
-#include <cassert>
 #include <algorithm>
+#include <cassert>
 
 using namespace KamataEngine;
 
@@ -18,12 +18,17 @@ void Player::Initialize(KamataEngine::Model* model) {
 
 	playerModel = model;
 
-	// WorldTransform 初期化
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = {0.0f, 0.0f, -20.0f}; // TPS向け初期位置
+	worldTransform_.translation_ = {0.0f, 0.0f, -20.0f};
 	worldTransform_.TransferMatrix();
 
 	input_ = KamataEngine::Input::GetInstance();
+
+	hp_ = 100;
+
+	// 初期Collision設定
+	collision_.SetPosition(worldTransform_.translation_);
+	collision_.SetRadius(1.0f);
 }
 
 void Player::Update() {
@@ -36,7 +41,7 @@ void Player::Update() {
 		return false;
 	});
 
-	// 移動処理
+	// 移動
 	Vector3 move = {0, 0, 0};
 	const float kCharacterSpeed = 0.2f;
 
@@ -54,7 +59,6 @@ void Player::Update() {
 	}
 
 	worldTransform_.translation_ += move;
-
 
 	// 移動限界
 	const float kMoveLimitX = 10.0f;
@@ -76,6 +80,10 @@ void Player::Update() {
 	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 	worldTransform_.TransferMatrix();
 
+	// Collision更新
+	collision_.SetPosition(worldTransform_.translation_);
+	collision_.SetRadius(1.0f);
+
 	// 攻撃
 	Attack();
 
@@ -84,13 +92,22 @@ void Player::Update() {
 		bullet->Update();
 	}
 
-	collision_.SetPosition(worldTransform_.translation_);
-	collision_.SetRadius(1.0f);
-
+	// ★ ヒットエフェクト管理
+	if (isHit_) {
+		hitEffectTimer_--;
+		if (hitEffectTimer_ <= 0) {
+			isHit_ = false;
+		}
+	}
 }
 
 void Player::Draw(KamataEngine::Camera& viewProjection) {
 	playerModel->Draw(worldTransform_, viewProjection);
+
+	// ★ ヒット時の簡易エフェクト（仮：デバッグ表示）
+	if (isHit_) {
+		OutputDebugStringA("Player is Hit! (flashing)\n");
+	}
 
 	for (PlayerBullet* bullet : playerBullets_) {
 		bullet->Draw(viewProjection);
@@ -109,4 +126,17 @@ void Player::Attack() {
 
 		playerBullets_.push_back(newBullet);
 	}
+}
+
+void Player::TakeDamage(int damage) {
+	hp_ -= damage;
+	if (hp_ < 0) {
+		hp_ = 0;
+	}
+	OutputDebugStringA("Player took damage!\n");
+}
+
+void Player::SetHit() {
+	isHit_ = true;
+	hitEffectTimer_ = 10;
 }

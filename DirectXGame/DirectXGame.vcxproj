@@ -106,17 +106,24 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BigEnemy.cpp" />
     <ClCompile Include="Collision.cpp" />
-    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="FinalStage.cpp" />
+    <ClCompile Include="smallEnemy.cpp" />
     <ClCompile Include="EnemyBullet.cpp" />
     <ClCompile Include="GameClear.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="kMath.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MainScene.cpp" />
+    <ClCompile Include="MidEnemy.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerBullet.cpp" />
-    <ClCompile Include="StageSelect.cpp" />
+    <ClCompile Include="BaseEnemy.cpp" />
+    <ClCompile Include="Stage1.cpp" />
+    <ClCompile Include="Stage2.cpp" />
+    <ClCompile Include="Stage3.cpp" />
+    <ClCompile Include="StageBase.cpp" />
     <ClCompile Include="Title.cpp" />
     <ClCompile Include="WorldTransformEx.cpp" />
   </ItemGroup>
@@ -196,16 +203,23 @@
     <None Include="Resources\shaders\Sprite.hlsli" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BigEnemy.h" />
     <ClInclude Include="Collision.h" />
-    <ClInclude Include="Enemy.h" />
+    <ClInclude Include="FinalStage.h" />
+    <ClInclude Include="smallEnemy.h" />
     <ClInclude Include="EnemyBullet.h" />
     <ClInclude Include="GameClear.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="kMath.h" />
     <ClInclude Include="MainScene.h" />
+    <ClInclude Include="MidEnemy.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerBullet.h" />
-    <ClInclude Include="StageSelect.h" />
+    <ClInclude Include="BaseEnemy.h" />
+    <ClInclude Include="Stage1.h" />
+    <ClInclude Include="Stage2.h" />
+    <ClInclude Include="Stage3.h" />
+    <ClInclude Include="StageBase.h" />
     <ClInclude Include="Title.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

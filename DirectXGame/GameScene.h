@@ -3,45 +3,40 @@
 
 #include "Player.h"
 #include "PlayerBullet.h"
-#include "Enemy.h"
 
+#include "BaseEnemy.h"
+#include "MidEnemy.h"
+#include "SmallEnemy.h"
+// #include "BigEnemy.h" // ← BigEnemy作成時に追加予定
 
+#include <list>
 
 using namespace KamataEngine;
 
 class GameScene {
-
 public:
-	// デストラクタ
 	~GameScene();
 
-	// 初期化
 	void Initialize();
-	// 更新
 	void Update();
-	// 描画
 	void Draw();
 
 private:
-	// カメラ
-	KamataEngine::Camera camera;
+	Camera camera;
 
-	// DirectX / 入力 / オーディオ
-	KamataEngine::DirectXCommon* dxCommon_ = nullptr;
-	KamataEngine::Input* input_ = nullptr;
-	KamataEngine::Audio* audio_ = nullptr;
+	DirectXCommon* dxCommon_ = nullptr;
+	Input* input_ = nullptr;
+	Audio* audio_ = nullptr;
 
-	// モデル
-	KamataEngine::Model* modelPlayer_ = nullptr;
-	KamataEngine::Model* modelEnemy_ = nullptr;
+	Model* modelPlayer_ = nullptr;
+	Model* modelEnemy_ = nullptr;
+	Model* modelMidEnemy_ = nullptr;
+	Model* modelBigEnemy_ = nullptr; // 予備：BigEnemy用（未使用ならnullptrのままでOK）
 
-
-	// デバッグカメラ
-	KamataEngine::DebugCamera* debugCamera_ = nullptr;
+	DebugCamera* debugCamera_ = nullptr;
 	bool isDebugCameraActive_ = false;
 
-	// プレイヤー
 	Player* player_ = nullptr;
-	//敵
-	std::list<Enemy*> enemies_;
+
+	std::list<BaseEnemy*> enemies_; // ★ BaseEnemy*で統一管理
 };
