@@ -60,6 +60,11 @@ void GameScene::Initialize() {
 	enemies_.push_back(midEnemy);
 
 	// BigEnemyは後で同様に追加予定
+
+	delete stage_;
+	stage_ = new Stage1();
+	stage_->Initialize(modelEnemy_, modelMidEnemy_, player_);
+
 }
 
 void GameScene::Update() {
@@ -80,13 +85,13 @@ void GameScene::Update() {
 		camera.UpdateMatrix();
 	}
 
-	// ★ 各Enemy更新
-	for (BaseEnemy* enemy : enemies_) {
-		enemy->Update(player_->GetWorldPosition());
+	// ★ Stage更新
+	if (stage_) {
+		stage_->Update();
 	}
 
-	// ★ 当たり判定：Player vs Enemy
-	for (BaseEnemy* enemy : enemies_) {
+	// Player vs Enemy
+	for (BaseEnemy* enemy : stage_->GetEnemies()) {
 		if (player_->GetCollision().CheckCollision(enemy->GetCollision())) {
 			player_->TakeDamage(20);
 			player_->SetHit();
@@ -94,8 +99,8 @@ void GameScene::Update() {
 		}
 	}
 
-	// ★ PlayerBullet vs Enemy
-	for (BaseEnemy* enemy : enemies_) {
+	// PlayerBullet vs Enemy
+	for (BaseEnemy* enemy : stage_->GetEnemies()) {
 		for (PlayerBullet* bullet : player_->GetBullets()) {
 			if (enemy->GetCollision().CheckCollision(bullet->GetCollision())) {
 				enemy->TakeDamage(10);
@@ -103,16 +108,6 @@ void GameScene::Update() {
 			}
 		}
 	}
-
-	// ★ Enemy削除
-	enemies_.remove_if([](BaseEnemy* enemy) {
-		if (enemy->IsDead()) {
-			delete enemy;
-			OutputDebugStringA("Enemy destroyed!\n");
-			return true;
-		}
-		return false;
-	});
 }
 
 void GameScene::Draw() {
@@ -129,9 +124,8 @@ void GameScene::Draw() {
 
 	player_->Draw(camera);
 
-	// ★ 各Enemy描画
-	for (BaseEnemy* enemy : enemies_) {
-		enemy->Draw(camera);
+	if (stage_) {
+		stage_->Draw(camera);
 	}
 
 	Model::PostDraw();

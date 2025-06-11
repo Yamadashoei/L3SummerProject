@@ -28,12 +28,6 @@
     <Filter Include="scene\game">
       <UniqueIdentifier>{68e3cbc7-3460-4ad4-b830-cd9e9b6ed60a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="scene\clear">
-      <UniqueIdentifier>{82dc0e1e-a7e3-4746-8b22-e4bfb80e5995}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="scene\main">
-      <UniqueIdentifier>{cdf24659-81d1-49d3-991e-952598e78649}</UniqueIdentifier>
-    </Filter>
     <Filter Include="player">
       <UniqueIdentifier>{7a209447-b27a-4910-9a5b-bf3a9ccb3b35}</UniqueIdentifier>
     </Filter>
@@ -52,6 +46,12 @@
     <Filter Include="scene\stage">
       <UniqueIdentifier>{323a8e63-dd99-4d3e-9bc0-44910121dc17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="scene\rule">
+      <UniqueIdentifier>{d5918c20-0369-4cba-9b1d-93af1bc33a14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="scene\operation">
+      <UniqueIdentifier>{87abf1d1-403e-4952-b45d-62235336944a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WorldTransformEx.cpp">
@@ -60,17 +60,8 @@
     <ClCompile Include="main.cpp">
       <Filter>自作ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Title.cpp">
-      <Filter>scene\title</Filter>
-    </ClCompile>
     <ClCompile Include="GameScene.cpp">
       <Filter>scene\game</Filter>
-    </ClCompile>
-    <ClCompile Include="GameClear.cpp">
-      <Filter>scene\clear</Filter>
-    </ClCompile>
-    <ClCompile Include="MainScene.cpp">
-      <Filter>scene\main</Filter>
     </ClCompile>
     <ClCompile Include="PlayerBullet.cpp">
       <Filter>player</Filter>
@@ -113,6 +104,18 @@
     </ClCompile>
     <ClCompile Include="StageBase.cpp">
       <Filter>scene\game</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>scene\title</Filter>
+    </ClCompile>
+    <ClCompile Include="RuleScene.cpp">
+      <Filter>scene\rule</Filter>
+    </ClCompile>
+    <ClCompile Include="OperationScene.cpp">
+      <Filter>scene\operation</Filter>
+    </ClCompile>
+    <ClCompile Include="MainSceneManager.cpp">
+      <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -165,17 +168,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Title.h">
-      <Filter>scene\title</Filter>
-    </ClInclude>
     <ClInclude Include="GameScene.h">
       <Filter>scene\game</Filter>
-    </ClInclude>
-    <ClInclude Include="GameClear.h">
-      <Filter>scene\clear</Filter>
-    </ClInclude>
-    <ClInclude Include="MainScene.h">
-      <Filter>scene\main</Filter>
     </ClInclude>
     <ClInclude Include="PlayerBullet.h">
       <Filter>player</Filter>
@@ -218,6 +212,18 @@
     </ClInclude>
     <ClInclude Include="StageBase.h">
       <Filter>scene\game</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>scene\title</Filter>
+    </ClInclude>
+    <ClInclude Include="RuleScene.h">
+      <Filter>scene\rule</Filter>
+    </ClInclude>
+    <ClInclude Include="OperationScene.h">
+      <Filter>scene\operation</Filter>
+    </ClInclude>
+    <ClInclude Include="MainSceneManager.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

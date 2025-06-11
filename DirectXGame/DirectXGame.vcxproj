@@ -109,13 +109,14 @@
     <ClCompile Include="BigEnemy.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="FinalStage.cpp" />
+    <ClCompile Include="MainSceneManager.cpp" />
+    <ClCompile Include="OperationScene.cpp" />
+    <ClCompile Include="RuleScene.cpp" />
     <ClCompile Include="smallEnemy.cpp" />
     <ClCompile Include="EnemyBullet.cpp" />
-    <ClCompile Include="GameClear.cpp" />
     <ClCompile Include="GameScene.cpp" />
     <ClCompile Include="kMath.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MainScene.cpp" />
     <ClCompile Include="MidEnemy.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerBullet.cpp" />
@@ -124,7 +125,7 @@
     <ClCompile Include="Stage2.cpp" />
     <ClCompile Include="Stage3.cpp" />
     <ClCompile Include="StageBase.cpp" />
-    <ClCompile Include="Title.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="WorldTransformEx.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -206,12 +207,13 @@
     <ClInclude Include="BigEnemy.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="FinalStage.h" />
+    <ClInclude Include="MainSceneManager.h" />
+    <ClInclude Include="OperationScene.h" />
+    <ClInclude Include="RuleScene.h" />
     <ClInclude Include="smallEnemy.h" />
     <ClInclude Include="EnemyBullet.h" />
-    <ClInclude Include="GameClear.h" />
     <ClInclude Include="GameScene.h" />
     <ClInclude Include="kMath.h" />
-    <ClInclude Include="MainScene.h" />
     <ClInclude Include="MidEnemy.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerBullet.h" />
@@ -220,7 +222,7 @@
     <ClInclude Include="Stage2.h" />
     <ClInclude Include="Stage3.h" />
     <ClInclude Include="StageBase.h" />
-    <ClInclude Include="Title.h" />
+    <ClInclude Include="TitleScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

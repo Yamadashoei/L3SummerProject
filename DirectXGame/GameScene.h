@@ -9,6 +9,12 @@
 #include "SmallEnemy.h"
 // #include "BigEnemy.h" // ← BigEnemy作成時に追加予定
 
+#include "StageBase.h"
+#include "Stage1.h"
+#include "Stage2.h"
+#include "Stage3.h"
+
+
 #include <list>
 
 using namespace KamataEngine;
@@ -39,4 +45,7 @@ private:
 	Player* player_ = nullptr;
 
 	std::list<BaseEnemy*> enemies_; // ★ BaseEnemy*で統一管理
+
+	StageBase* stage_ = nullptr;
+
 };
