@@ -17,6 +17,9 @@ public:
 	// 描画
 	void Draw(KamataEngine::Camera& viewProjection);
 
+	const KamataEngine::Vector3& GetWorldPosition() const { return worldTransform_.translation_; }
+
+
 private:
 	// 発射
 	void Attack();

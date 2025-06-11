@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "Enemy.h"
 #include "Player.h"
 
 #include <cassert>
@@ -8,6 +9,12 @@ using namespace KamataEngine;
 GameScene::~GameScene() {
 	delete modelPlayer_;
 	delete player_;
+	delete modelEnemy_;
+
+	for (Enemy* enemy : enemies_) {
+		delete enemy;
+	}
+
 	delete debugCamera_;
 }
 
@@ -24,11 +31,24 @@ void GameScene::Initialize() {
 	camera.UpdateMatrix();
 
 	// プレイヤーモデル読み込み
-	modelPlayer_ = KamataEngine::Model::CreateFromOBJ("cube"); // 仮cubeモデル
+	modelPlayer_ = KamataEngine::Model::CreateFromOBJ("cube");
 
 	// プレイヤー生成・初期化
 	player_ = new Player();
 	player_->Initialize(modelPlayer_);
+
+	// Enemy モデル読み込み
+	modelEnemy_ = KamataEngine::Model::CreateFromOBJ("cube");
+
+	// 弾撃ち敵の追加
+	Enemy* shootEnemy = new Enemy();
+	shootEnemy->Initialize(modelEnemy_, {0.0f, 5.0f, 10.0f}, Enemy::AttackType::Shoot);
+	enemies_.push_back(shootEnemy);
+
+	// 体当たり敵の追加（動きはまだ未実装だけど先に配置だけOK）
+	Enemy* ramEnemy = new Enemy();
+	ramEnemy->Initialize(modelEnemy_, {-5.0f, 3.0f, 20.0f}, Enemy::AttackType::Ram);
+	enemies_.push_back(ramEnemy);
 
 	// デバッグカメラ生成
 	debugCamera_ = new KamataEngine::DebugCamera(KamataEngine::WinApp::kWindowWidth, KamataEngine::WinApp::kWindowHeight);
@@ -39,6 +59,15 @@ void GameScene::Initialize() {
 }
 
 void GameScene::Update() {
+
+	// ★ プレイヤー位置取得
+	Vector3 playerPos = player_->GetWorldPosition();
+
+	// ★ 各Enemyにプレイヤー位置をセット
+	for (Enemy* enemy : enemies_) {
+		enemy->SetPlayerPosition(playerPos);
+	}
+
 	// プレイヤー更新
 	player_->Update();
 
@@ -57,6 +86,11 @@ void GameScene::Update() {
 	} else {
 		camera.UpdateMatrix();
 	}
+
+	// 敵更新
+	for (Enemy* enemy : enemies_) {
+		enemy->Update();
+	}
 }
 
 void GameScene::Draw() {
@@ -70,7 +104,15 @@ void GameScene::Draw() {
 
 #pragma region 3Dオブジェクト描画
 	Model::PreDraw(commandList);
+
+	// プレイヤー描画
 	player_->Draw(camera);
+
+	// 敵描画
+	for (Enemy* enemy : enemies_) {
+		enemy->Draw(camera);
+	}
+
 	Model::PostDraw();
 #pragma endregion
 

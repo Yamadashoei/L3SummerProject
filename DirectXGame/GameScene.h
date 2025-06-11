@@ -3,6 +3,9 @@
 
 #include "Player.h"
 #include "PlayerBullet.h"
+#include "Enemy.h"
+
+
 
 using namespace KamataEngine;
 
@@ -30,6 +33,8 @@ private:
 
 	// モデル
 	KamataEngine::Model* modelPlayer_ = nullptr;
+	KamataEngine::Model* modelEnemy_ = nullptr;
+
 
 	// デバッグカメラ
 	KamataEngine::DebugCamera* debugCamera_ = nullptr;
@@ -37,4 +42,6 @@ private:
 
 	// プレイヤー
 	Player* player_ = nullptr;
+	//敵
+	std::list<Enemy*> enemies_;
 };

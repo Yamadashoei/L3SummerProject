@@ -40,6 +40,9 @@
     <Filter Include="player">
       <UniqueIdentifier>{7a209447-b27a-4910-9a5b-bf3a9ccb3b35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="enemy">
+      <UniqueIdentifier>{17d10519-33a7-41d2-9f23-c0dff6073208}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WorldTransformEx.cpp">
@@ -71,6 +74,12 @@
     </ClCompile>
     <ClCompile Include="kMath.cpp">
       <Filter>自作ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyBullet.cpp">
+      <Filter>enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>enemy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +155,12 @@
     </ClInclude>
     <ClInclude Include="kMath.h">
       <Filter>自作ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyBullet.h">
+      <Filter>enemy</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
