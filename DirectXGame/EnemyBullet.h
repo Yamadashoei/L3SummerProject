@@ -1,6 +1,7 @@
 #pragma once
 #include "KamataEngine.h"
 #include "kMath.h"
+#include "Collision.h"
 
 #include <cassert>
 
@@ -20,6 +21,9 @@ public:
 	// デスフラグ
 	bool IsDead() const { return isDead_; }
 
+	const Collision& GetCollision() const { return collision_; }
+
+
 private:
 	KamataEngine::WorldTransform worldTransform_;
 	KamataEngine::Model* enemyBulletModel_ = nullptr;
@@ -35,4 +39,7 @@ private:
 
 	int32_t deathTimer_ = kLifeTime;
 	bool isDead_ = false;
+
+	 Collision collision_;
+
 };

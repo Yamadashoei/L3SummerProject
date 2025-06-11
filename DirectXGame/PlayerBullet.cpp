@@ -34,6 +34,10 @@ void PlayerBullet::Update() {
 	// マトリクス更新
 	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 	worldTransform_.TransferMatrix();
+
+	collision_.SetPosition(worldTransform_.translation_);
+	collision_.SetRadius(0.5f);
+
 }
 
 void PlayerBullet::Draw(const KamataEngine::Camera& viewProjection) { playerBulletModel->Draw(worldTransform_, viewProjection, textureHandle_); }

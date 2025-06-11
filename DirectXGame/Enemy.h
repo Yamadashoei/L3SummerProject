@@ -1,52 +1,59 @@
 #pragma once
+#include "Collision.h"
 #include "EnemyBullet.h"
 #include "KamataEngine.h"
 
-#include <list>
-
 class Enemy {
 public:
-	// 攻撃タイプ
-	enum class AttackType { None, Shoot, Ram };
+	enum class AttackType { Shoot, Ram };
 
-public:
-	~Enemy();
+	enum class EnemyType { Fish, Jellyfish, Eel, Mine, MidBoss, KrakenTentacle, KrakenCore };
 
-	void Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position, AttackType type);
+	// 初期化
+	void Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position, AttackType type, EnemyType enemyType);
 
-	void Update();
+	// 更新
+	void Update(const KamataEngine::Vector3& playerPosition);
 
+	// 描画
 	void Draw(const KamataEngine::Camera& camera);
 
-	bool IsDead() const { return isDead_; }
-
+	// 弾取得
 	const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
 
-	// ★ プレイヤー位置をセット
-	void SetPlayerPosition(const KamataEngine::Vector3& playerPos) { playerPosition_ = playerPos; }
+	// Collision取得
+	const Collision& GetCollision() const { return collision_; }
+
+	// HP
+	int GetHP() const { return hp_; }
+	void TakeDamage(int damage) {
+		hp_ -= damage;
+		if (hp_ < 0)
+			hp_ = 0;
+	}
+	bool IsDead() const { return hp_ <= 0; }
+
+	// EnemyType取得
+	EnemyType GetEnemyType() const { return type_; }
 
 private:
-	void Move();
-	void Attack();
+	void Attack(const KamataEngine::Vector3& playerPosition);
 
 private:
-	float moveRangeX_ = 5.0f;
-	float moveSpeedX_ = 0.1f;
-	int moveDir_ = 1;
-
+	KamataEngine::WorldTransform worldTransform_;
 	KamataEngine::Model* enemyModel = nullptr;
 
-	KamataEngine::WorldTransform worldTransform_;
+	AttackType attackType_;
+	EnemyType type_;
+	int hp_ = 10;
 
-	AttackType attackType_ = AttackType::None;
-
-	bool isDead_ = false;
-
-	int attackTimer_ = 0;
-	const int kAttackInterval = 60;
+	Collision collision_;
 
 	std::list<EnemyBullet*> bullets_;
 
-	// ★ プレイヤー位置保持用
-	KamataEngine::Vector3 playerPosition_{};
+	int attackTimer_ = 0;
+	static const int kAttackInterval = 60;
+
+	KamataEngine::Vector3 startPosition_; // 体当たり時に戻る初期位置
+	bool isReturning_ = false;            // 今戻り中かどうか
 };

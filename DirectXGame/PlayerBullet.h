@@ -1,6 +1,7 @@
 #pragma once
 #include "KamataEngine.h"
 #include "kMath.h"
+#include "Collision.h"
 
 #include <cassert>
 
@@ -20,6 +21,9 @@ public:
 
 	/// デスフラグ getter
 	bool IsDead() const { return isDead_; }
+
+	const Collision& GetCollision() const { return collision_; }
+
 
 private:
 	// ワールドトランスフォーム
@@ -42,4 +46,7 @@ private:
 
 	// デスフラグ
 	bool isDead_ = false;
+
+	 Collision collision_;
+
 };

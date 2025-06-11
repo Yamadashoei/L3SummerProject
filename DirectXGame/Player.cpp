@@ -55,6 +55,7 @@ void Player::Update() {
 
 	worldTransform_.translation_ += move;
 
+
 	// 移動限界
 	const float kMoveLimitX = 10.0f;
 	const float kMoveLimitY = 10.0f;
@@ -82,6 +83,9 @@ void Player::Update() {
 	for (PlayerBullet* bullet : playerBullets_) {
 		bullet->Update();
 	}
+
+	collision_.SetPosition(worldTransform_.translation_);
+	collision_.SetRadius(1.0f);
 
 }
 

@@ -42,12 +42,12 @@ void GameScene::Initialize() {
 
 	// 弾撃ち敵の追加
 	Enemy* shootEnemy = new Enemy();
-	shootEnemy->Initialize(modelEnemy_, {0.0f, 5.0f, 10.0f}, Enemy::AttackType::Shoot);
+	shootEnemy->Initialize(modelEnemy_, {0.0f, 5.0f, 10.0f}, Enemy::AttackType::Shoot, Enemy::EnemyType::Fish);
 	enemies_.push_back(shootEnemy);
 
 	// 体当たり敵の追加（動きはまだ未実装だけど先に配置だけOK）
 	Enemy* ramEnemy = new Enemy();
-	ramEnemy->Initialize(modelEnemy_, {-5.0f, 3.0f, 20.0f}, Enemy::AttackType::Ram);
+	ramEnemy->Initialize(modelEnemy_, {-5.0f, 3.0f, 20.0f}, Enemy::AttackType::Ram, Enemy::EnemyType::Fish);
 	enemies_.push_back(ramEnemy);
 
 	// デバッグカメラ生成
@@ -65,7 +65,8 @@ void GameScene::Update() {
 
 	// ★ 各Enemyにプレイヤー位置をセット
 	for (Enemy* enemy : enemies_) {
-		enemy->SetPlayerPosition(playerPos);
+		//enemy->SetPlayerPosition(playerPos);
+		enemy->Update(playerPos);
 	}
 
 	// プレイヤー更新
@@ -89,8 +90,46 @@ void GameScene::Update() {
 
 	// 敵更新
 	for (Enemy* enemy : enemies_) {
-		enemy->Update();
+		enemy->Update(player_->GetWorldPosition());
 	}
+
+	// ① Player と Enemy の当たり判定
+	for (Enemy* enemy : enemies_) {
+		if (player_->GetCollision().CheckCollision(enemy->GetCollision())) {
+			player_->TakeDamage(20); // 敵体当たり → プレイヤーに20ダメージ
+			OutputDebugStringA("Player hit Enemy!\n");
+		}
+	}
+
+	// ② Player と EnemyBullet の当たり判定
+	for (Enemy* enemy : enemies_) {
+		for (EnemyBullet* bullet : enemy->GetBullets()) {
+			if (player_->GetCollision().CheckCollision(bullet->GetCollision())) {
+				player_->TakeDamage(10); // 弾ヒット → プレイヤーに10ダメージ
+				OutputDebugStringA("Player hit EnemyBullet!\n");
+			}
+		}
+	}
+
+	// ③ PlayerBullet と Enemy の当たり判定
+	for (Enemy* enemy : enemies_) {
+		for (PlayerBullet* bullet : player_->GetBullets()) {
+			if (enemy->GetCollision().CheckCollision(bullet->GetCollision())) {
+				enemy->TakeDamage(10); // プレイヤー弾 → 敵に10ダメージ
+				OutputDebugStringA("PlayerBullet hit Enemy!\n");
+			}
+		}
+	}
+
+	enemies_.remove_if([](Enemy* enemy) {
+		if (enemy->IsDead()) {
+			delete enemy;
+			OutputDebugStringA("Enemy destroyed!\n");
+			return true;
+		}
+		return false;
+	});
+
 }
 
 void GameScene::Draw() {
