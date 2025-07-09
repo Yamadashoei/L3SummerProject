@@ -48,4 +48,7 @@ private:
 	// プレイヤー用 HPバー
 	Sprite* hpBackSprite_ = nullptr;
 	Sprite* hpBarSprite_ = nullptr;
+
+	// レティクル
+	Sprite* reticle_ = nullptr;
 };

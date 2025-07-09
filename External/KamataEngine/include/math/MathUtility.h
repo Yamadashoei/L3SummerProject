@@ -104,6 +104,10 @@ Vector3 operator*(const Vector3& v, const Matrix4x4& m);
 // 線形補間
 float Lerp(float a, float b, float t);
 
+// スクリーン座標をワールド座標に変換する関数
+Vector3 ScreenToWorld(const Vector2& screenPos, const Matrix4x4& viewMatrix, const Matrix4x4& projectionMatrix, int screenWidth, int screenHeight);
+
+
 } // namespace MathUtility
 
 } // namespace KamataEngine

@@ -12,7 +12,7 @@ public:
 	void Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position) override;
 	void Update(const KamataEngine::Vector3& playerPosition, const KamataEngine::Camera& camera) override;
 	void Draw(const KamataEngine::Camera& camera) override;
-	void DrawHPBar(); // ← 追加
+	void DrawHPBar();
 
 private:
 	enum class Phase { Phase1, Phase2, Phase3 };
@@ -25,5 +25,5 @@ private:
 	static const int kAttackInterval = 60;
 	int phaseTimer_ = 600;
 
-	EnemyHpBar hpBar_; // ← 置き換え済み
+	EnemyHpBar hpBar_;
 };

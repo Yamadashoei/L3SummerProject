@@ -1,8 +1,16 @@
+#define NOMINMAX
+#include <Windows.h>
+
 #include "Player.h"
 #include "PlayerBullet.h"
 #include "kMath.h"
 #include <algorithm>
 #include <cassert>
+
+#include <base/TextureManager.h>
+#include <base/WinApp.h>
+#include <input\Input.h>
+#include <math\MathUtility.h>
 
 using namespace KamataEngine;
 
@@ -10,64 +18,54 @@ Player::~Player() {
 	for (PlayerBullet* bullet : playerBullets_) {
 		delete bullet;
 	}
+	playerBullets_.clear();
 }
 
-void Player::Initialize(KamataEngine::Model* model) {
+void Player::Initialize(Model* model, Camera* camera) {
 	assert(model);
 	playerModel = model;
-	worldTransform_.Initialize();
-	worldTransform_.translation_ = {0.0f, 0.0f, -20.0f};
-	worldTransform_.TransferMatrix();
-	input_ = KamataEngine::Input::GetInstance();
+	camera_ = camera;
+	input_ = Input::GetInstance();
 
-	hp_ = maxHp_;
+	worldTransform_.Initialize();
+	worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
+	worldTransform_.TransferMatrix();
 
 	collision_.SetPosition(worldTransform_.translation_);
 	collision_.SetRadius(1.0f);
 }
 
 void Player::Update() {
-	playerBullets_.remove_if([](PlayerBullet* bullet) {
-		if (bullet->IsDead()) {
-			delete bullet;
+	// 攻撃処理
+	Attack();
+
+	// 弾の更新
+	for (PlayerBullet* bullet : playerBullets_) {
+		bullet->Update();
+	}
+	playerBullets_.remove_if([](PlayerBullet* b) {
+		if (b->IsDead()) {
+			delete b;
 			return true;
 		}
 		return false;
 	});
 
-	Vector3 move = {0, 0, 0};
-	const float kCharacterSpeed = 0.2f;
-	if (input_->PushKey(DIK_LEFT))
-		move.x -= kCharacterSpeed;
-	if (input_->PushKey(DIK_RIGHT))
-		move.x += kCharacterSpeed;
-	if (input_->PushKey(DIK_DOWN))
-		move.y -= kCharacterSpeed;
-	if (input_->PushKey(DIK_UP))
-		move.y += kCharacterSpeed;
-	worldTransform_.translation_ += move;
-
-	const float kMoveLimitX = 10.0f;
-	const float kMoveLimitY = 10.0f;
-	worldTransform_.translation_.x = std::clamp(worldTransform_.translation_.x, -kMoveLimitX, +kMoveLimitX);
-	worldTransform_.translation_.y = std::clamp(worldTransform_.translation_.y, -kMoveLimitY, +kMoveLimitY);
-
-	const float kRotSpeed = 0.02f;
+	// 自機の行動（仮でWASD移動）
+	if (input_->PushKey(DIK_W))
+		worldTransform_.translation_.y += 0.5f;
+	if (input_->PushKey(DIK_S))
+		worldTransform_.translation_.y -= 0.5f;
 	if (input_->PushKey(DIK_A))
-		worldTransform_.rotation_.y -= kRotSpeed;
+		worldTransform_.translation_.x -= 0.5f;
 	if (input_->PushKey(DIK_D))
-		worldTransform_.rotation_.y += kRotSpeed;
+		worldTransform_.translation_.x += 0.5f;
 
+	// マトリクス更新
 	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 	worldTransform_.TransferMatrix();
 
 	collision_.SetPosition(worldTransform_.translation_);
-	collision_.SetRadius(1.0f);
-
-	Attack();
-	for (PlayerBullet* bullet : playerBullets_) {
-		bullet->Update();
-	}
 
 	if (isHit_) {
 		hitEffectTimer_--;
@@ -77,35 +75,49 @@ void Player::Update() {
 	}
 }
 
-void Player::Draw(KamataEngine::Camera& viewProjection) {
+void Player::Draw(Camera& viewProjection) {
 	playerModel->Draw(worldTransform_, viewProjection);
-	if (isHit_) {
-		OutputDebugStringA("Player is Hit! (flashing)\n");
-	}
+
 	for (PlayerBullet* bullet : playerBullets_) {
 		bullet->Draw(viewProjection);
 	}
 }
 
-void Player::Attack() {
-	if (input_->TriggerKey(DIK_SPACE)) {
-		const float kBulletSpeed = 1.0f;
-		Vector3 velocity(0, 0, kBulletSpeed);
-		velocity = TransformNormal(velocity, worldTransform_.matWorld_);
-		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(playerModel, worldTransform_.translation_, velocity);
-		playerBullets_.push_back(newBullet);
-	}
-}
-
 void Player::TakeDamage(int damage) {
 	hp_ -= damage;
-	if (hp_ < 0)
-		hp_ = 0;
-	OutputDebugStringA("Player took damage!\n");
+	hp_ = std::max(hp_, 0);
 }
 
 void Player::SetHit() {
 	isHit_ = true;
-	hitEffectTimer_ = 10;
+	hitEffectTimer_ = 20;
+}
+
+void Player::Attack() {
+	if (input_->IsTriggerMouse(0)) {
+		// マウス位置取得
+		POINT mousePos;
+		GetCursorPos(&mousePos);
+		ScreenToClient(WinApp::GetInstance()->GetHwnd(), &mousePos);
+
+		Vector2 screenPos = {static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)};
+		// カメラからの距離に応じてZ深度を指定（一般的に1.0fでOK）
+		float zDepth = 1.0f;
+		
+		// ビュー・プロジェクション行列を合成して逆行列を取得
+		Matrix4x4 viewProj = Multiply(camera_->matView, camera_->matProjection);
+		Matrix4x4 invViewProj = KamataEngine::MathUtility::Inverse(viewProj);
+
+		// スクリーン座標をワールド座標に変換
+		Vector3 targetWorldPos = ScreenToWorld(screenPos, zDepth, camera_->matView, camera_->matProjection, WinApp::kWindowWidth, WinApp::kWindowHeight);
+
+		// 自機の位置からターゲットへの方向ベクトル
+		Vector3 toTarget = targetWorldPos - worldTransform_.translation_;
+		Vector3 dir = Normalize(toTarget);
+		Vector3 velocity = dir * 1.0f;
+
+		PlayerBullet* newBullet = new PlayerBullet();
+		newBullet->Initialize(playerModel, worldTransform_.translation_, velocity);
+		playerBullets_.push_back(newBullet);
+	}
 }

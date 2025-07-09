@@ -21,7 +21,7 @@ void MidEnemy::Initialize(KamataEngine::Model* model, const KamataEngine::Vector
 	phaseTimer_ = 600;
 
 	uint32_t whiteTex = TextureManager::Load("./Resources/white1x1.png");
-	hpBar_.Initialize(whiteTex); // ← 修正ポイント
+	hpBar_.Initialize(whiteTex); 
 }
 
 void MidEnemy::Update(const KamataEngine::Vector3& playerPosition, const KamataEngine::Camera& camera) {

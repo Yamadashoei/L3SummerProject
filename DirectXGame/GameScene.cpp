@@ -1,7 +1,7 @@
 #include "GameScene.h"
 #include <base/DirectXCommon.h>
 #include <base/TextureManager.h>
-#include <base/WinApp.h> // Windowサイズ定数
+#include <base/WinApp.h>
 #include <cassert>
 
 using namespace KamataEngine;
@@ -15,6 +15,7 @@ GameScene::~GameScene() {
 	delete debugCamera_;
 	delete hpBackSprite_;
 	delete hpBarSprite_;
+	delete reticle_;
 
 	for (BaseEnemy* enemy : enemies_) {
 		delete enemy;
@@ -37,7 +38,7 @@ void GameScene::Initialize() {
 	modelBigEnemy_ = Model::CreateFromOBJ("cube");
 
 	player_ = new Player();
-	player_->Initialize(modelPlayer_);
+	player_->Initialize(modelPlayer_, &camera);
 
 	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
 	AxisIndicator::GetInstance()->SetVisible(true);
@@ -47,13 +48,17 @@ void GameScene::Initialize() {
 	stage_ = new Stage1();
 	stage_->Initialize(modelEnemy_, modelMidEnemy_, player_);
 
-	// プレイヤー用 HPバーの初期化
 	uint32_t whiteTex = TextureManager::Load("./Resources/white1x1.png");
 	Vector2 barPos = {20.0f, 20.0f};
 	hpBackSprite_ = Sprite::Create(whiteTex, barPos, {0.3f, 0.3f, 0.3f, 1.0f});
 	hpBackSprite_->SetSize({200.0f, 20.0f});
 	hpBarSprite_ = Sprite::Create(whiteTex, barPos, {1.0f, 0.0f, 0.0f, 1.0f});
 	hpBarSprite_->SetSize({200.0f, 20.0f});
+
+	// レティクル初期化
+	uint32_t reticleTex = TextureManager::Load("./Resources/reticle.png");
+	reticle_ = Sprite::Create(reticleTex, {640.0f, 360.0f});
+	reticle_->SetAnchorPoint({0.5f, 0.5f});
 }
 
 void GameScene::Update() {
@@ -110,37 +115,39 @@ void GameScene::Update() {
 		OutputDebugStringA("PLAYER DEAD - Game Over\n");
 		PostQuitMessage(0);
 	}
+
+	// レティクル位置更新
+	POINT mousePos;
+	GetCursorPos(&mousePos);
+	ScreenToClient(WinApp::GetInstance()->GetHwnd(), &mousePos);
+	Vector2 reticlePos = {static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)};
+	reticle_->SetPosition(reticlePos);
 }
 
 void GameScene::Draw() {
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
-
-	// ★ Sprite描画前の準備（必ずこれが先）
 	Sprite::PreDraw(commandList);
 
-	// ★ EnemyのHPバー描画（←ここで EnemyHpBar::Draw を呼ぶ）
 	for (BaseEnemy* enemy : stage_->GetEnemies()) {
 		if (auto* mid = dynamic_cast<MidEnemy*>(enemy)) {
-			mid->DrawHPBar(); // この中で EnemyHpBar::Draw() が呼ばれてよい
+			mid->DrawHPBar();
 		}
 	}
 
-	// ★ プレイヤーのHPバー描画
 	if (hpBackSprite_ && hpBarSprite_) {
 		float hpRatio = static_cast<float>(player_->GetHP()) / player_->GetMaxHP();
 		hpBarSprite_->SetSize({200.0f * hpRatio, 20.0f});
-
 		hpBackSprite_->Draw();
 		hpBarSprite_->Draw();
 	}
 
-	// ★ Sprite描画終了
-	Sprite::PostDraw();
+	if (reticle_) {
+		reticle_->Draw();
+	}
 
-	// ★ 3D描画準備
+	Sprite::PostDraw();
 	dxCommon_->ClearDepthBuffer();
 	Model::PreDraw(commandList);
-
 	player_->Draw(camera);
 
 	if (stage_) {

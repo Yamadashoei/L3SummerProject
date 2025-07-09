@@ -7,7 +7,7 @@ class Player {
 public:
 	~Player();
 
-	void Initialize(KamataEngine::Model* model);
+	void Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera);
 	void Update();
 	void Draw(KamataEngine::Camera& viewProjection);
 
@@ -23,6 +23,9 @@ public:
 
 	void SetHit();
 
+	// レティクルのスクリーン座標を受け取る
+	void SetReticlePosition(const KamataEngine::Vector2& pos);
+
 private:
 	void Attack();
 
@@ -30,6 +33,7 @@ private:
 	KamataEngine::WorldTransform worldTransform_;
 	KamataEngine::Model* playerModel = nullptr;
 	KamataEngine::Input* input_ = nullptr;
+	KamataEngine::Camera* camera_ = nullptr;
 
 	std::list<PlayerBullet*> playerBullets_;
 	Collision collision_;
@@ -39,4 +43,6 @@ private:
 
 	bool isHit_ = false;
 	int hitEffectTimer_ = 0;
+
+	KamataEngine::Vector2 reticlePosition_ = {640.0f / 2, 360.0f / 2}; // デフォルトで画面中央
 };

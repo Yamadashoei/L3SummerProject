@@ -17,7 +17,7 @@ void SmallEnemy::Initialize(KamataEngine::Model* model, const KamataEngine::Vect
 }
 
 void SmallEnemy::Update(const KamataEngine::Vector3& playerPosition, const KamataEngine::Camera& camera) {
-	// ← 警告回避のため追加（未使用引数を明示的に処理）
+	// ← 警告回避のため
 	(void)camera;
 
 	// Ram型の動き（突撃→戻る）
