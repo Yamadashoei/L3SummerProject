@@ -108,6 +108,7 @@
   <ItemGroup>
     <ClCompile Include="BigEnemy.cpp" />
     <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="EnemyHpBar.cpp" />
     <ClCompile Include="FinalStage.cpp" />
     <ClCompile Include="MainSceneManager.cpp" />
     <ClCompile Include="OperationScene.cpp" />
@@ -206,6 +207,7 @@
   <ItemGroup>
     <ClInclude Include="BigEnemy.h" />
     <ClInclude Include="Collision.h" />
+    <ClInclude Include="EnemyHpBar.h" />
     <ClInclude Include="FinalStage.h" />
     <ClInclude Include="MainSceneManager.h" />
     <ClInclude Include="OperationScene.h" />

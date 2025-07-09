@@ -9,10 +9,12 @@ public:
 	void Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position) override;
 	void Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position, AttackType type);
 
-	void Update(const KamataEngine::Vector3& playerPosition) override;
+	// Camera 引数付きに変更（BaseEnemyと一致させる）
+	void Update(const KamataEngine::Vector3& playerPosition, const KamataEngine::Camera& camera) override;
+
 	void Draw(const KamataEngine::Camera& camera) override;
 
-	const std::list<EnemyBullet*>& GetBullets() const { return bullets_; }
+	const std::list<EnemyBullet*>& GetBullets() const override { return bullets_; }
 
 private:
 	void Attack(const KamataEngine::Vector3& playerPosition);

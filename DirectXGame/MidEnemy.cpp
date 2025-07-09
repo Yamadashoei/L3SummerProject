@@ -1,36 +1,42 @@
 #include "MidEnemy.h"
 #include "kMath.h"
+#include <2d/Sprite.h>
+#include <3d/Camera.h>
+#include <algorithm>
+#include <base/DirectXCommon.h>
+#include <base/TextureManager.h>
+
+using namespace KamataEngine;
 
 void MidEnemy::Initialize(KamataEngine::Model* model, const KamataEngine::Vector3& position) {
 	model_ = model;
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;
-	worldTransform_.scale_ = {2.0f, 2.0f, 2.0f}; 
-
+	worldTransform_.scale_ = {2.0f, 2.0f, 2.0f};
 	worldTransform_.TransferMatrix();
 
 	hp_ = 300;
-
 	currentPhase_ = Phase::Phase1;
 	attackTimer_ = kAttackInterval;
 	phaseTimer_ = 600;
+
+	uint32_t whiteTex = TextureManager::Load("./Resources/white1x1.png");
+	hpBar_.Initialize(whiteTex); // ← 修正ポイント
 }
 
-void MidEnemy::Update(const KamataEngine::Vector3& playerPosition) {
+void MidEnemy::Update(const KamataEngine::Vector3& playerPosition, const KamataEngine::Camera& camera) {
+	// フェーズ切替
 	phaseTimer_--;
 	if (phaseTimer_ <= 0) {
 		switch (currentPhase_) {
 		case Phase::Phase1:
 			currentPhase_ = Phase::Phase2;
-			OutputDebugStringA("MidEnemy: Phase2!\n");
 			break;
 		case Phase::Phase2:
 			currentPhase_ = Phase::Phase3;
-			OutputDebugStringA("MidEnemy: Phase3!\n");
 			break;
 		case Phase::Phase3:
 			currentPhase_ = Phase::Phase1;
-			OutputDebugStringA("MidEnemy: Phase1!\n");
 			break;
 		}
 		phaseTimer_ = 600;
@@ -55,15 +61,19 @@ void MidEnemy::Update(const KamataEngine::Vector3& playerPosition) {
 
 	collision_.SetPosition(worldTransform_.translation_);
 	collision_.SetRadius(2.0f);
+
+	// HPバー更新
+	hpBar_.Update(worldTransform_.translation_, camera, hp_, 300);
 }
 
 void MidEnemy::Draw(const KamataEngine::Camera& camera) {
 	model_->Draw(worldTransform_, camera);
-
 	for (EnemyBullet* bullet : bullets_) {
 		bullet->Draw(camera);
 	}
 }
+
+void MidEnemy::DrawHPBar() { hpBar_.Draw(); }
 
 void MidEnemy::Attack(const KamataEngine::Vector3& playerPosition) {
 	attackTimer_--;
@@ -87,9 +97,9 @@ void MidEnemy::Attack(const KamataEngine::Vector3& playerPosition) {
 	}
 
 	if (attackTimer_ <= 0) {
-		KamataEngine::Vector3 toPlayer = playerPosition - worldTransform_.translation_;
-		KamataEngine::Vector3 dir = Normalize(toPlayer);
-		KamataEngine::Vector3 velocity = dir * bulletSpeed;
+		Vector3 toPlayer = playerPosition - worldTransform_.translation_;
+		Vector3 dir = Normalize(toPlayer);
+		Vector3 velocity = dir * bulletSpeed;
 
 		EnemyBullet* newBullet = new EnemyBullet();
 		newBullet->Initialize(model_, worldTransform_.translation_, velocity);

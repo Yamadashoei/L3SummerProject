@@ -1,9 +1,7 @@
 #include "GameScene.h"
-#include "MidEnemy.h"
-#include "Player.h"
-#include "SmallEnemy.h"
-// #include "BigEnemy.h" // ← BigEnemy作成時に追加予定
-
+#include <base/DirectXCommon.h>
+#include <base/TextureManager.h>
+#include <base/WinApp.h> // Windowサイズ定数
 #include <cassert>
 
 using namespace KamataEngine;
@@ -13,9 +11,10 @@ GameScene::~GameScene() {
 	delete modelEnemy_;
 	delete modelMidEnemy_;
 	delete modelBigEnemy_;
-
 	delete player_;
 	delete debugCamera_;
+	delete hpBackSprite_;
+	delete hpBarSprite_;
 
 	for (BaseEnemy* enemy : enemies_) {
 		delete enemy;
@@ -33,38 +32,28 @@ void GameScene::Initialize() {
 	camera.UpdateMatrix();
 
 	modelPlayer_ = Model::CreateFromOBJ("cube");
-	modelEnemy_ = Model::CreateFromOBJ("cube");    // 仮モデル
-	modelMidEnemy_ = Model::CreateFromOBJ("cube"); // 仮モデル
-	modelBigEnemy_ = Model::CreateFromOBJ("cube"); // 仮モデル
+	modelEnemy_ = Model::CreateFromOBJ("cube");
+	modelMidEnemy_ = Model::CreateFromOBJ("cube");
+	modelBigEnemy_ = Model::CreateFromOBJ("cube");
 
 	player_ = new Player();
 	player_->Initialize(modelPlayer_);
 
 	debugCamera_ = new DebugCamera(WinApp::kWindowWidth, WinApp::kWindowHeight);
-
 	AxisIndicator::GetInstance()->SetVisible(true);
 	AxisIndicator::GetInstance()->SetTargetCamera(&camera);
-
-	// ★ SmallEnemy生成
-	SmallEnemy* shootEnemy = new SmallEnemy();
-	shootEnemy->Initialize(modelEnemy_, {0.0f, 5.0f, 10.0f}, SmallEnemy::AttackType::Shoot);
-	enemies_.push_back(shootEnemy);
-
-	SmallEnemy* ramEnemy = new SmallEnemy();
-	ramEnemy->Initialize(modelEnemy_, {-5.0f, 3.0f, 20.0f}, SmallEnemy::AttackType::Ram);
-	enemies_.push_back(ramEnemy);
-
-	// ★ MidEnemy生成
-	MidEnemy* midEnemy = new MidEnemy();
-	midEnemy->Initialize(modelMidEnemy_, {5.0f, 0.0f, 15.0f});
-	enemies_.push_back(midEnemy);
-
-	// BigEnemyは後で同様に追加予定
 
 	delete stage_;
 	stage_ = new Stage1();
 	stage_->Initialize(modelEnemy_, modelMidEnemy_, player_);
 
+	// プレイヤー用 HPバーの初期化
+	uint32_t whiteTex = TextureManager::Load("./Resources/white1x1.png");
+	Vector2 barPos = {20.0f, 20.0f};
+	hpBackSprite_ = Sprite::Create(whiteTex, barPos, {0.3f, 0.3f, 0.3f, 1.0f});
+	hpBackSprite_->SetSize({200.0f, 20.0f});
+	hpBarSprite_ = Sprite::Create(whiteTex, barPos, {1.0f, 0.0f, 0.0f, 1.0f});
+	hpBarSprite_->SetSize({200.0f, 20.0f});
 }
 
 void GameScene::Update() {
@@ -85,12 +74,11 @@ void GameScene::Update() {
 		camera.UpdateMatrix();
 	}
 
-	// ★ Stage更新
 	if (stage_) {
-		stage_->Update();
+		stage_->Update(camera);
 	}
 
-	// Player vs Enemy
+	// ===== 当たり判定処理 =====
 	for (BaseEnemy* enemy : stage_->GetEnemies()) {
 		if (player_->GetCollision().CheckCollision(enemy->GetCollision())) {
 			player_->TakeDamage(20);
@@ -99,7 +87,6 @@ void GameScene::Update() {
 		}
 	}
 
-	// PlayerBullet vs Enemy
 	for (BaseEnemy* enemy : stage_->GetEnemies()) {
 		for (PlayerBullet* bullet : player_->GetBullets()) {
 			if (enemy->GetCollision().CheckCollision(bullet->GetCollision())) {
@@ -108,18 +95,50 @@ void GameScene::Update() {
 			}
 		}
 	}
+
+	for (BaseEnemy* enemy : stage_->GetEnemies()) {
+		for (EnemyBullet* bullet : enemy->GetBullets()) {
+			if (player_->GetCollision().CheckCollision(bullet->GetCollision())) {
+				player_->TakeDamage(10);
+				player_->SetHit();
+				OutputDebugStringA("EnemyBullet hit Player!\n");
+			}
+		}
+	}
+
+	if (player_->IsDead()) {
+		OutputDebugStringA("PLAYER DEAD - Game Over\n");
+		PostQuitMessage(0);
+	}
 }
 
 void GameScene::Draw() {
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 
-#pragma region 背景スプライト描画
+	// ★ Sprite描画前の準備（必ずこれが先）
 	Sprite::PreDraw(commandList);
-	Sprite::PostDraw();
-	dxCommon_->ClearDepthBuffer();
-#pragma endregion
 
-#pragma region 3Dオブジェクト描画
+	// ★ EnemyのHPバー描画（←ここで EnemyHpBar::Draw を呼ぶ）
+	for (BaseEnemy* enemy : stage_->GetEnemies()) {
+		if (auto* mid = dynamic_cast<MidEnemy*>(enemy)) {
+			mid->DrawHPBar(); // この中で EnemyHpBar::Draw() が呼ばれてよい
+		}
+	}
+
+	// ★ プレイヤーのHPバー描画
+	if (hpBackSprite_ && hpBarSprite_) {
+		float hpRatio = static_cast<float>(player_->GetHP()) / player_->GetMaxHP();
+		hpBarSprite_->SetSize({200.0f * hpRatio, 20.0f});
+
+		hpBackSprite_->Draw();
+		hpBarSprite_->Draw();
+	}
+
+	// ★ Sprite描画終了
+	Sprite::PostDraw();
+
+	// ★ 3D描画準備
+	dxCommon_->ClearDepthBuffer();
 	Model::PreDraw(commandList);
 
 	player_->Draw(camera);
@@ -129,10 +148,4 @@ void GameScene::Draw() {
 	}
 
 	Model::PostDraw();
-#pragma endregion
-
-#pragma region 前景スプライト描画
-	Sprite::PreDraw(commandList);
-	Sprite::PostDraw();
-#pragma endregion
 }

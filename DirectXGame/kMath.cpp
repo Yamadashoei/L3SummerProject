@@ -150,3 +150,20 @@ KamataEngine::Vector3 TransformNormal(const KamataEngine::Vector3& v, const Kama
 	KamataEngine::Vector3 result{v.x * m.m[0][0] + v.y * m.m[1][0] + v.z * m.m[2][0], v.x * m.m[0][1] + v.y * m.m[1][1] + v.z * m.m[2][1], v.x * m.m[0][2] + v.y * m.m[1][2] + v.z * m.m[2][2]};
 	return result;
 }
+
+KamataEngine::Vector2 WorldToScreen(const KamataEngine::Vector3& worldPos, const KamataEngine::Matrix4x4& view, const KamataEngine::Matrix4x4& projection, int screenWidth, int screenHeight) {
+	using namespace KamataEngine;
+
+	// ビュー×プロジェクション合成
+	Matrix4x4 vp = Multiply(view, projection);
+
+	// 変換（NDC座標系）
+	Vector3 ndc = Transform(worldPos, vp);
+
+	// NDC→スクリーン座標変換
+	Vector2 screenPos;
+	screenPos.x = (ndc.x * 0.5f + 0.5f) * screenWidth;
+	screenPos.y = (1.0f - (ndc.y * 0.5f + 0.5f)) * screenHeight;
+
+	return screenPos;
+}

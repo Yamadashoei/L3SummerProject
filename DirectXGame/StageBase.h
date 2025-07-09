@@ -9,7 +9,10 @@ public:
 	virtual ~StageBase() = default;
 
 	virtual void Initialize(KamataEngine::Model* modelEnemy, KamataEngine::Model* modelMidEnemy, Player* player) = 0;
-	virtual void Update() = 0;
+
+	// ✅ Camera& を受け取るように修正！
+	virtual void Update(KamataEngine::Camera& camera) = 0;
+
 	virtual void Draw(KamataEngine::Camera& camera) = 0;
 	virtual bool IsStageFinished() const = 0;
 

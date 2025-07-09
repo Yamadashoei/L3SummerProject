@@ -7,13 +7,10 @@
 #include "BaseEnemy.h"
 #include "MidEnemy.h"
 #include "SmallEnemy.h"
-// #include "BigEnemy.h" // ← BigEnemy作成時に追加予定
-
-#include "StageBase.h"
 #include "Stage1.h"
 #include "Stage2.h"
 #include "Stage3.h"
-
+#include "StageBase.h"
 
 #include <list>
 
@@ -37,15 +34,18 @@ private:
 	Model* modelPlayer_ = nullptr;
 	Model* modelEnemy_ = nullptr;
 	Model* modelMidEnemy_ = nullptr;
-	Model* modelBigEnemy_ = nullptr; // 予備：BigEnemy用（未使用ならnullptrのままでOK）
+	Model* modelBigEnemy_ = nullptr;
 
 	DebugCamera* debugCamera_ = nullptr;
 	bool isDebugCameraActive_ = false;
 
 	Player* player_ = nullptr;
 
-	std::list<BaseEnemy*> enemies_; // ★ BaseEnemy*で統一管理
+	std::list<BaseEnemy*> enemies_;
 
 	StageBase* stage_ = nullptr;
 
+	// プレイヤー用 HPバー
+	Sprite* hpBackSprite_ = nullptr;
+	Sprite* hpBarSprite_ = nullptr;
 };

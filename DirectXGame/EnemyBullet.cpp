@@ -35,4 +35,5 @@ void EnemyBullet::Update() {
 
 }
 
-void EnemyBullet::Draw(const KamataEngine::Camera& camera) { enemyBulletModel_->Draw(worldTransform_, camera, textureHandle_); }
+void EnemyBullet::Draw(const KamataEngine::Camera& camera) { 
+	enemyBulletModel_->Draw(worldTransform_, camera, textureHandle_); }

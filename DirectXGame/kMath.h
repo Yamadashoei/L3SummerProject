@@ -72,3 +72,6 @@ inline KamataEngine::Vector3 Normalize(const KamataEngine::Vector3& v) {
 	}
 	return {v.x / len, v.y / len, v.z / len};
 }
+
+// ワールド→スクリーン変換
+KamataEngine::Vector2 WorldToScreen(const KamataEngine::Vector3& worldPos, const KamataEngine::Matrix4x4& view, const KamataEngine::Matrix4x4& projection, int screenWidth, int screenHeight);

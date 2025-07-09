@@ -16,12 +16,15 @@ void SmallEnemy::Initialize(KamataEngine::Model* model, const KamataEngine::Vect
 	attackTimer_ = kAttackInterval;
 }
 
-void SmallEnemy::Update(const KamataEngine::Vector3& playerPosition) {
+void SmallEnemy::Update(const KamataEngine::Vector3& playerPosition, const KamataEngine::Camera& camera) {
+	// ← 警告回避のため追加（未使用引数を明示的に処理）
+	(void)camera;
+
+	// Ram型の動き（突撃→戻る）
 	if (attackType_ == AttackType::Ram) {
 		if (!isReturning_) {
 			KamataEngine::Vector3 toPlayer = playerPosition - worldTransform_.translation_;
 			float distance = Vector3Length(toPlayer);
-
 			float hitDistance = collision_.GetRadius() + 1.0f;
 
 			if (distance > hitDistance) {
@@ -44,14 +47,18 @@ void SmallEnemy::Update(const KamataEngine::Vector3& playerPosition) {
 				OutputDebugStringA("RamEnemy return complete!\n");
 			}
 		}
-	} else if (attackType_ == AttackType::Shoot) {
+	}
+	// Shoot型の行動
+	else if (attackType_ == AttackType::Shoot) {
 		Attack(playerPosition);
 	}
 
+	// 弾の更新
 	for (EnemyBullet* bullet : bullets_) {
 		bullet->Update();
 	}
 
+	// 弾の削除
 	bullets_.remove_if([](EnemyBullet* bullet) {
 		if (bullet->IsDead()) {
 			delete bullet;
@@ -60,6 +67,7 @@ void SmallEnemy::Update(const KamataEngine::Vector3& playerPosition) {
 		return false;
 	});
 
+	// 行列と当たり判定更新
 	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 	worldTransform_.TransferMatrix();
 
@@ -68,8 +76,10 @@ void SmallEnemy::Update(const KamataEngine::Vector3& playerPosition) {
 }
 
 void SmallEnemy::Draw(const KamataEngine::Camera& camera) {
+	// 本体描画
 	model_->Draw(worldTransform_, camera);
 
+	// 弾の描画
 	for (EnemyBullet* bullet : bullets_) {
 		bullet->Draw(camera);
 	}
