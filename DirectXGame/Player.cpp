@@ -102,7 +102,7 @@ void Player::Attack() {
 
 		Vector2 screenPos = {static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)};
 		// カメラからの距離に応じてZ深度を指定（一般的に1.0fでOK）
-		float zDepth = 1.0f;
+		float zDepth = worldTransform_.translation_.z + 10.0f;
 		
 		// ビュー・プロジェクション行列を合成して逆行列を取得
 		Matrix4x4 viewProj = Multiply(camera_->matView, camera_->matProjection);
