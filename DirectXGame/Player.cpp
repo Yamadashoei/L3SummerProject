@@ -28,7 +28,7 @@ void Player::Initialize(Model* model, Camera* camera) {
 	input_ = Input::GetInstance();
 
 	worldTransform_.Initialize();
-	worldTransform_.translation_ = {0.0f, 0.0f, 0.0f};
+	worldTransform_.translation_ = {0.0f, 0.0f, -20.0f};
 	worldTransform_.TransferMatrix();
 
 	collision_.SetPosition(worldTransform_.translation_);
@@ -113,7 +113,8 @@ void Player::Attack() {
 
 		// 自機の位置からターゲットへの方向ベクトル
 		Vector3 toTarget = targetWorldPos - worldTransform_.translation_;
-		Vector3 dir = Normalize(toTarget);
+		//強制的に向きを反転(あとから修正)
+		Vector3 dir = Normalize(toTarget * -1.0f);
 		Vector3 velocity = dir * 1.0f;
 
 		PlayerBullet* newBullet = new PlayerBullet();
