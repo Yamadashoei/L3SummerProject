@@ -3,6 +3,7 @@
 #include <base/TextureManager.h>
 #include <base/WinApp.h>
 #include <cassert>
+#include "BigEnemy.h"
 
 using namespace KamataEngine;
 
@@ -59,6 +60,15 @@ void GameScene::Initialize() {
 	uint32_t reticleTex = TextureManager::Load("./Resources/reticle.png");
 	reticle_ = Sprite::Create(reticleTex, {640.0f, 360.0f});
 	reticle_->SetAnchorPoint({0.5f, 0.5f});
+
+	scoreManager_ = new ScoreManager();
+	scoreManager_->Initialize();
+
+	uint32_t numberTex = TextureManager::Load("./Resources/number.png");
+	scoreUI_ = new ScoreUI();
+	scoreUI_->Initialize(numberTex, {1000.0f, 20.0f}); // 右上表示など
+
+
 }
 
 void GameScene::Update() {
@@ -122,6 +132,21 @@ void GameScene::Update() {
 	ScreenToClient(WinApp::GetInstance()->GetHwnd(), &mousePos);
 	Vector2 reticlePos = {static_cast<float>(mousePos.x), static_cast<float>(mousePos.y)};
 	reticle_->SetPosition(reticlePos);
+
+	for (BaseEnemy* e : stage_->GetEnemies()) {
+		if (e->IsDead()) {
+			if (dynamic_cast<MidEnemy*>(e)) {
+				scoreManager_->AddScore(1000);
+			} else if (dynamic_cast<BigEnemy*>(e)) {
+				scoreManager_->AddScore(5000);
+			} else {
+				int r = rand() % 201 + 100; // 100〜300点
+				scoreManager_->AddScore(r);
+			}
+		}
+	}
+
+
 }
 
 void GameScene::Draw() {
@@ -140,10 +165,12 @@ void GameScene::Draw() {
 		hpBackSprite_->Draw();
 		hpBarSprite_->Draw();
 	}
-
+	// レティクル描画
 	if (reticle_) {
 		reticle_->Draw();
 	}
+	// スコアUI描画
+	scoreUI_->Draw(scoreManager_->GetScore());
 
 	Sprite::PostDraw();
 	dxCommon_->ClearDepthBuffer();

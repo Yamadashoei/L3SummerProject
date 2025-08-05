@@ -113,6 +113,8 @@
     <ClCompile Include="MainSceneManager.cpp" />
     <ClCompile Include="OperationScene.cpp" />
     <ClCompile Include="RuleScene.cpp" />
+    <ClCompile Include="ScoreManager.cpp" />
+    <ClCompile Include="ScoreUI.cpp" />
     <ClCompile Include="smallEnemy.cpp" />
     <ClCompile Include="EnemyBullet.cpp" />
     <ClCompile Include="GameScene.cpp" />
@@ -212,6 +214,8 @@
     <ClInclude Include="MainSceneManager.h" />
     <ClInclude Include="OperationScene.h" />
     <ClInclude Include="RuleScene.h" />
+    <ClInclude Include="ScoreManager.h" />
+    <ClInclude Include="ScoreUI.h" />
     <ClInclude Include="smallEnemy.h" />
     <ClInclude Include="EnemyBullet.h" />
     <ClInclude Include="GameScene.h" />

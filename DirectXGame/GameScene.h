@@ -12,6 +12,9 @@
 #include "Stage3.h"
 #include "StageBase.h"
 
+#include "ScoreManager.h"
+#include "ScoreUI.h"
+
 #include <list>
 
 using namespace KamataEngine;
@@ -51,4 +54,9 @@ private:
 
 	// レティクル
 	Sprite* reticle_ = nullptr;
+
+	// スコア管理
+	ScoreManager* scoreManager_ = nullptr;
+	ScoreUI* scoreUI_ = nullptr;
+
 };

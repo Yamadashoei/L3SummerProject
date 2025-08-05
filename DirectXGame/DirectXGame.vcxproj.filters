@@ -52,6 +52,9 @@
     <Filter Include="scene\operation">
       <UniqueIdentifier>{87abf1d1-403e-4952-b45d-62235336944a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="score">
+      <UniqueIdentifier>{255e7f1f-df9f-4e5d-b629-0f92c25549cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WorldTransformEx.cpp">
@@ -119,6 +122,12 @@
     </ClCompile>
     <ClCompile Include="EnemyHpBar.cpp">
       <Filter>enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="ScoreManager.cpp">
+      <Filter>score</Filter>
+    </ClCompile>
+    <ClCompile Include="ScoreUI.cpp">
+      <Filter>score</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -230,6 +239,12 @@
     </ClInclude>
     <ClInclude Include="EnemyHpBar.h">
       <Filter>enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreManager.h">
+      <Filter>score</Filter>
+    </ClInclude>
+    <ClInclude Include="ScoreUI.h">
+      <Filter>score</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
