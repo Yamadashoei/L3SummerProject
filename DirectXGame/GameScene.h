@@ -27,6 +27,11 @@ public:
 	void Update();
 	void Draw();
 
+enum class GamePhase {
+    Playing,
+    Result
+};
+
 private:
 	Camera camera;
 
@@ -58,5 +63,8 @@ private:
 	// スコア管理
 	ScoreManager* scoreManager_ = nullptr;
 	ScoreUI* scoreUI_ = nullptr;
+
+	// ゲームフェーズ
+	GamePhase phase_ = GamePhase::Playing;
 
 };
