@@ -49,7 +49,7 @@ private:
 
 	//プレイヤー
 	Player* player_ = nullptr;
-
+	//敵
 	std::list<BaseEnemy*> enemies_;
 
 	StageBase* stage_ = nullptr;
