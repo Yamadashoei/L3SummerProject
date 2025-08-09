@@ -47,6 +47,7 @@ private:
 	DebugCamera* debugCamera_ = nullptr;
 	bool isDebugCameraActive_ = false;
 
+	//プレイヤー
 	Player* player_ = nullptr;
 
 	std::list<BaseEnemy*> enemies_;

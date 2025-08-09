@@ -7,6 +7,7 @@
 
 using namespace KamataEngine;
 
+//
 GameScene::~GameScene() {
 	delete modelPlayer_;
 	delete modelEnemy_;
