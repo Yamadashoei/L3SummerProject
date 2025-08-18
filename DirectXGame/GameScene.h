@@ -27,10 +27,7 @@ public:
 	void Update();
 	void Draw();
 
-enum class GamePhase {
-    Playing,
-    Result
-};
+	enum class GamePhase { Playing, Result };
 
 private:
 	Camera camera;
@@ -47,25 +44,17 @@ private:
 	DebugCamera* debugCamera_ = nullptr;
 	bool isDebugCameraActive_ = false;
 
-	//プレイヤー
 	Player* player_ = nullptr;
-	//敵
-	std::list<BaseEnemy*> enemies_;
-
 	StageBase* stage_ = nullptr;
 
-	// プレイヤー用 HPバー
 	Sprite* hpBackSprite_ = nullptr;
 	Sprite* hpBarSprite_ = nullptr;
-
-	// レティクル
 	Sprite* reticle_ = nullptr;
 
-	// スコア管理
 	ScoreManager* scoreManager_ = nullptr;
 	ScoreUI* scoreUI_ = nullptr;
 
-	// ゲームフェーズ
 	GamePhase phase_ = GamePhase::Playing;
 
+	Sprite* resultSprite_ = nullptr; // ← 追加
 };

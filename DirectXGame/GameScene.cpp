@@ -1,13 +1,12 @@
 #include "GameScene.h"
+#include "BigEnemy.h"
 #include <base/DirectXCommon.h>
 #include <base/TextureManager.h>
 #include <base/WinApp.h>
 #include <cassert>
-#include "BigEnemy.h"
 
 using namespace KamataEngine;
 
-//
 GameScene::~GameScene() {
 	delete modelPlayer_;
 	delete modelEnemy_;
@@ -18,10 +17,14 @@ GameScene::~GameScene() {
 	delete hpBackSprite_;
 	delete hpBarSprite_;
 	delete reticle_;
+	delete resultSprite_; // ← 追加
 
-	for (BaseEnemy* enemy : enemies_) {
+	for (BaseEnemy* enemy : stage_->GetEnemies()) {
 		delete enemy;
 	}
+	delete stage_;
+	delete scoreManager_;
+	delete scoreUI_;
 }
 
 void GameScene::Initialize() {
@@ -57,7 +60,6 @@ void GameScene::Initialize() {
 	hpBarSprite_ = Sprite::Create(whiteTex, barPos, {1.0f, 0.0f, 0.0f, 1.0f});
 	hpBarSprite_->SetSize({200.0f, 20.0f});
 
-	// レティクル初期化
 	uint32_t reticleTex = TextureManager::Load("./Resources/reticle.png");
 	reticle_ = Sprite::Create(reticleTex, {640.0f, 360.0f});
 	reticle_->SetAnchorPoint({0.5f, 0.5f});
@@ -67,12 +69,21 @@ void GameScene::Initialize() {
 
 	uint32_t numberTex = TextureManager::Load("./Resources/number.png");
 	scoreUI_ = new ScoreUI();
-	scoreUI_->Initialize(numberTex, {1000.0f, 20.0f}); // 右上表示など
+	scoreUI_->Initialize(numberTex, {1000.0f, 20.0f});
 
+	uint32_t resultTex = TextureManager::Load("./Resources/clear.png");
+	resultSprite_ = Sprite::Create(resultTex, {640.0f, 360.0f});
+	resultSprite_->SetAnchorPoint({0.5f, 0.5f});
 
+	phase_ = GamePhase::Playing;
 }
 
 void GameScene::Update() {
+	if (phase_ == GamePhase::Result) {
+		// Resultフェーズ中のキー入力など処理追加可能
+		return;
+	}
+
 	player_->Update();
 
 #ifdef _DEBUG
@@ -94,12 +105,10 @@ void GameScene::Update() {
 		stage_->Update(camera);
 	}
 
-	// ===== 当たり判定処理 =====
 	for (BaseEnemy* enemy : stage_->GetEnemies()) {
 		if (player_->GetCollision().CheckCollision(enemy->GetCollision())) {
 			player_->TakeDamage(20);
 			player_->SetHit();
-			OutputDebugStringA("Player hit Enemy!\n");
 		}
 	}
 
@@ -107,7 +116,6 @@ void GameScene::Update() {
 		for (PlayerBullet* bullet : player_->GetBullets()) {
 			if (enemy->GetCollision().CheckCollision(bullet->GetCollision())) {
 				enemy->TakeDamage(10);
-				OutputDebugStringA("PlayerBullet hit Enemy!\n");
 			}
 		}
 	}
@@ -117,7 +125,6 @@ void GameScene::Update() {
 			if (player_->GetCollision().CheckCollision(bullet->GetCollision())) {
 				player_->TakeDamage(10);
 				player_->SetHit();
-				OutputDebugStringA("EnemyBullet hit Player!\n");
 			}
 		}
 	}
@@ -127,7 +134,6 @@ void GameScene::Update() {
 		PostQuitMessage(0);
 	}
 
-	// レティクル位置更新
 	POINT mousePos;
 	GetCursorPos(&mousePos);
 	ScreenToClient(WinApp::GetInstance()->GetHwnd(), &mousePos);
@@ -138,22 +144,29 @@ void GameScene::Update() {
 		if (e->IsDead()) {
 			if (dynamic_cast<MidEnemy*>(e)) {
 				scoreManager_->AddScore(1000);
+				phase_ = GamePhase::Result; // ← クリア演出へ移行
 			} else if (dynamic_cast<BigEnemy*>(e)) {
 				scoreManager_->AddScore(5000);
 			} else {
-				int r = rand() % 201 + 100; // 100〜300点
+				int r = rand() % 201 + 100;
 				scoreManager_->AddScore(r);
 			}
 		}
 	}
-
-
-
 }
 
 void GameScene::Draw() {
 	ID3D12GraphicsCommandList* commandList = dxCommon_->GetCommandList();
 	Sprite::PreDraw(commandList);
+
+	if (phase_ == GamePhase::Result) {
+		if (resultSprite_) {
+			resultSprite_->Draw();
+		}
+		scoreUI_->Draw(scoreManager_->GetScore());
+		Sprite::PostDraw();
+		return;
+	}
 
 	for (BaseEnemy* enemy : stage_->GetEnemies()) {
 		if (auto* mid = dynamic_cast<MidEnemy*>(enemy)) {
@@ -167,18 +180,18 @@ void GameScene::Draw() {
 		hpBackSprite_->Draw();
 		hpBarSprite_->Draw();
 	}
-	// レティクル描画
+
 	if (reticle_) {
 		reticle_->Draw();
 	}
-	// スコアUI描画
+
 	scoreUI_->Draw(scoreManager_->GetScore());
 
 	Sprite::PostDraw();
 	dxCommon_->ClearDepthBuffer();
 	Model::PreDraw(commandList);
-	player_->Draw(camera);
 
+	player_->Draw(camera);
 	if (stage_) {
 		stage_->Draw(camera);
 	}
