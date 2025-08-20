@@ -19,33 +19,15 @@ void Stage1::Update(KamataEngine::Camera& camera) {
 	timer_++;
 
 	// Wave 0: 小型敵3体（ばらけて出現）
-	if (wave_ == 0 && timer_ > 60) {
-		for (int i = 0; i < 3; ++i) {
-			float x = -8.0f + float(rand() % 17); // -8.0〜+8.0
-			float y = -2.0f + float(rand() % 5);  // -2.0〜+2.0
-			float z = 25.0f + float(rand() % 5);  // 25〜30
-
-			auto enemy = new SmallEnemy();
-			enemy->Initialize(modelEnemy_, {x, y, z}, SmallEnemy::AttackType::Shoot);
-			AddEnemy(enemy);
-		}
+	if (wave_ == 0 && timer_ > kWave0StartFrame) {
+		SpawnSmallEnemies_Shoot(kWave0SmallCount);
 		wave_++;
 	}
-
 	// Wave 1: 小型敵5体（広がって出現）
 	else if (wave_ == 1 && enemies_.empty()) {
-		for (int i = 0; i < 5; ++i) {
-			float x = -10.0f + float(rand() % 21); // -10〜+10
-			float y = -3.0f + float(rand() % 7);   // -3〜+3
-			float z = 27.0f + float(rand() % 6);   // 27〜33
-
-			auto enemy = new SmallEnemy();
-			enemy->Initialize(modelEnemy_, {x, y, z}, SmallEnemy::AttackType::Ram);
-			AddEnemy(enemy);
-		}
+		SpawnSmallEnemies_Ram(kWave1SmallCount);
 		wave_++;
 	}
-
 	// Wave 2: 中ボス1体出現
 	else if (wave_ == 2 && enemies_.empty()) {
 		auto mid = new MidEnemy();
@@ -53,7 +35,6 @@ void Stage1::Update(KamataEngine::Camera& camera) {
 		AddEnemy(mid);
 		wave_++;
 	}
-
 	// Wave 3: 全撃破でクリア
 	else if (wave_ == 3 && enemies_.empty()) {
 		stageFinished_ = true;
@@ -85,6 +66,30 @@ void Stage1::Draw(KamataEngine::Camera& camera) {
 bool Stage1::IsStageFinished() const { return stageFinished_; }
 
 void Stage1::AddEnemy(BaseEnemy* enemy) {
-	assert(enemy);
+	if (!enemy)
+		return; // ★ 保険
 	enemies_.push_back(enemy);
+}
+
+// ------- 追加：スポーン補助（従来と同じ分布になるようにしてある） -------
+void Stage1::SpawnSmallEnemies_Shoot(int count) {
+	for (int i = 0; i < count; ++i) {
+		float x = RandLikeIntSteps(kW0XMin, kW0XSpan, 16); // -8..+8 → 17ステップ
+		float y = RandLikeIntSteps(kW0YMin, kW0YSpan, 4);  // -2..+2 → 5ステップ
+		float z = RandLikeIntSteps(kW0ZMin, kW0ZSpan, 4);  // 25..30 → 5ステップ
+		auto e = new SmallEnemy();
+		e->Initialize(modelEnemy_, {x, y, z}, SmallEnemy::AttackType::Shoot);
+		AddEnemy(e);
+	}
+}
+
+void Stage1::SpawnSmallEnemies_Ram(int count) {
+	for (int i = 0; i < count; ++i) {
+		float x = RandLikeIntSteps(kW1XMin, kW1XSpan, 20); // -10..+10 → 21ステップ
+		float y = RandLikeIntSteps(kW1YMin, kW1YSpan, 6);  // -3..+3   → 7ステップ
+		float z = RandLikeIntSteps(kW1ZMin, kW1ZSpan, 6);  // 27..33   → 7ステップ
+		auto e = new SmallEnemy();
+		e->Initialize(modelEnemy_, {x, y, z}, SmallEnemy::AttackType::Ram);
+		AddEnemy(e);
+	}
 }
