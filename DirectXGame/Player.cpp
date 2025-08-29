@@ -52,43 +52,18 @@ void Player::Update() {
 		return false;
 	});
 
-	// ===== スムーズ移動（加減速＋斜め正規化） =====
-	KamataEngine::Vector2 in = {0.0f, 0.0f};
+	// 自機の行動（仮でWASD移動）
 	if (input_->PushKey(DIK_W))
-		in.y += 1.0f;
+		worldTransform_.translation_.y += 0.1f;
 	if (input_->PushKey(DIK_S))
-		in.y -= 1.0f;
+		worldTransform_.translation_.y -= 0.1f;
 	if (input_->PushKey(DIK_A))
-		in.x -= 1.0f;
+		worldTransform_.translation_.x -= 0.1f;
 	if (input_->PushKey(DIK_D))
-		in.x += 1.0f;
+		worldTransform_.translation_.x += 0.1f;
 
-	if (in.x != 0.0f || in.y != 0.0f) {
-		float len = std::sqrt(in.x * in.x + in.y * in.y);
-		in.x /= len;
-		in.y /= len;
-	}
-
-	KamataEngine::Vector3 targetVel = {in.x * move_.maxSpeed, in.y * move_.maxSpeed, 0.0f};
-
-	auto approach = [](float cur, float target, float accel, float decel) {
-		bool accelerating = std::abs(target) > std::abs(cur);
-		float step = accelerating ? accel : decel;
-		float diff = target - cur;
-		if (diff > step)
-			return cur + step;
-		if (diff < -step)
-			return cur - step;
-		return target;
-	};
-	velocity_.x = approach(velocity_.x, targetVel.x, move_.accel, move_.decel);
-	velocity_.y = approach(velocity_.y, targetVel.y, move_.accel, move_.decel);
-
-	worldTransform_.translation_.x += velocity_.x;
-	worldTransform_.translation_.y += velocity_.y;
-
-	// 行列更新
-	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
+	// マトリクス更新
+	    worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 	worldTransform_.TransferMatrix();
 
 	collision_.SetPosition(worldTransform_.translation_);
