@@ -60,7 +60,7 @@ void GameScene::Initialize() {
 	hpBarSprite_ = Sprite::Create(whiteTex, barPos, {1.0f, 0.0f, 0.0f, 1.0f});
 	hpBarSprite_->SetSize({200.0f, 20.0f});
 
-	uint32_t reticleTex = TextureManager::Load("./Resources/reticle.png");
+	uint32_t reticleTex = TextureManager::Load("./Resources/player/reticle.png");
 	reticle_ = Sprite::Create(reticleTex, {640.0f, 360.0f});
 	reticle_->SetAnchorPoint({0.5f, 0.5f});
 
