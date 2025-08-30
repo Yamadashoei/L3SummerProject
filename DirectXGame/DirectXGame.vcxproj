@@ -216,6 +216,7 @@
     <ClInclude Include="RuleScene.h" />
     <ClInclude Include="ScoreManager.h" />
     <ClInclude Include="ScoreUI.h" />
+    <ClInclude Include="Skydome.h" />
     <ClInclude Include="smallEnemy.h" />
     <ClInclude Include="EnemyBullet.h" />
     <ClInclude Include="GameScene.h" />

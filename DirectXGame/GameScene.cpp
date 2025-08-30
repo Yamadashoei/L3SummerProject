@@ -1,3 +1,4 @@
+// GameScene.cpp
 #include "GameScene.h"
 #include "BigEnemy.h"
 #include <base/DirectXCommon.h>
@@ -12,6 +13,10 @@ GameScene::~GameScene() {
 	delete modelEnemy_;
 	delete modelMidEnemy_;
 	delete modelBigEnemy_;
+
+	// ★ 追加
+	delete skydome_;
+
 	delete player_;
 	delete debugCamera_;
 	delete hpBackSprite_;
@@ -41,6 +46,11 @@ void GameScene::Initialize() {
 	modelEnemy_ = Model::CreateFromOBJ("cube");
 	modelMidEnemy_ = Model::CreateFromOBJ("cube");
 	modelBigEnemy_ = Model::CreateFromOBJ("cube");
+
+	// ★ 追加：Skydome セットアップ（まずは小さめ半径で映ることを確認）
+	skydome_ = new Skydome();
+	skydome_->Initialize("skydome", /*radius=*/80.0f, /*flipInside=*/false);
+	// 必要なら微回転：skydome_->SetSpinY(0.001f);
 
 	player_ = new Player();
 	player_->Initialize(modelPlayer_, &camera);
@@ -99,6 +109,11 @@ void GameScene::Update() {
 		camera.TransferMatrix();
 	} else {
 		camera.UpdateMatrix();
+	}
+
+	// ★ 追加：天球をカメラに追従
+	if (skydome_) {
+		skydome_->Update(camera);
 	}
 
 	if (stage_) {
@@ -190,6 +205,11 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 	dxCommon_->ClearDepthBuffer();
 	Model::PreDraw(commandList);
+
+	// ★ 追加：まず天球を描画（内側から見えるように）
+	if (skydome_ && skydome_->IsLoaded()) {
+		skydome_->Draw(camera);
+	}
 
 	player_->Draw(camera);
 	if (stage_) {

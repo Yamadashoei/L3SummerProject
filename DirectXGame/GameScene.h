@@ -1,3 +1,4 @@
+// GameScene.h
 #pragma once
 #include "KamataEngine.h"
 
@@ -14,6 +15,9 @@
 
 #include "ScoreManager.h"
 #include "ScoreUI.h"
+
+// ★ 追加
+#include "Skydome.h"
 
 #include <list>
 
@@ -40,6 +44,9 @@ private:
 	Model* modelEnemy_ = nullptr;
 	Model* modelMidEnemy_ = nullptr;
 	Model* modelBigEnemy_ = nullptr;
+
+	// ★ 追加：天球
+	Skydome* skydome_ = nullptr;
 
 	DebugCamera* debugCamera_ = nullptr;
 	bool isDebugCameraActive_ = false;

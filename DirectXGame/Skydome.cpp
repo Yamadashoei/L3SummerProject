@@ -13,25 +13,21 @@ void Skydome::Initialize(const char* objName, float radius, bool flipInside) {
 	radius_ = radius;
 	flipInside_ = flipInside;
 
-	// 読み込み（パス違いの保険：2パターン試す）
-	model_ = Model::CreateFromOBJ(objName);
+	model_ = Model::CreateFromOBJ(objName); // "skydome"
+	if (!model_)
+		model_ = Model::CreateFromOBJ("skydome/skydome");
 	if (!model_) {
-		// 例: "skydome/skydome" 直指定が必要な実装向け
-		model_ = Model::CreateFromOBJ("skydome");
-	}
-	if (!model_) {
-		OutputDebugStringA("[Skydome] OBJ load failed.\n");
+		OutputDebugStringA("[Skydome] OBJ load failed\n");
 		return;
 	}
 
 	wt_.Initialize();
 	SetRadius(radius_);
-
-	// 最初は原点（Updateでカメラに追従）
-	wt_.translation_ = {0.0f, 0.0f, 0.0f};
+	wt_.translation_ = {0, 0, 0};
 	wt_.matWorld_ = MakeAffineMatrix(wt_.scale_, wt_.rotation_, wt_.translation_);
 	wt_.TransferMatrix();
 }
+
 
 void Skydome::SetRadius(float r) {
 	radius_ = r;

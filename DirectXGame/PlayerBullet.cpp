@@ -7,7 +7,7 @@ void PlayerBullet::Initialize(KamataEngine::Model* model, const KamataEngine::Ve
 	playerBulletModel = model;
 
 	// テクスチャ読み込み（単色白）
-	textureHandle_ = TextureManager::Load("white1x1.png");
+	textureHandle_ = TextureManager::Load("./Resources/PlayerBullet/playerBullet.png");
 
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position;

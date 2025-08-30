@@ -6,16 +6,9 @@
 class Skydome {
 public:
 	~Skydome();
-
-	// objName: Model::CreateFromOBJ に渡す名前（例: "skydome"）
-	// radius : 半径（ゲーム空間単位）
-	// flipInside: 内側を描くために X を負スケールで反転する保険（BlenderでFlip忘れても見える）
 	void Initialize(const char* objName, float radius, bool flipInside = true);
 
-	// カメラの位置に追従＋（任意で）微回転
 	void Update(KamataEngine::Camera& camera);
-
-	// 3D描画
 	void Draw(KamataEngine::Camera& camera);
 
 	// オプション
